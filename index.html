@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greek to Czech Transcription</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .output-group {
+            margin-bottom: 30px;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Řečtina → Čeština</h1>
+        
+        <div class="input-group">
+            <label for="greek-text">Řecký text:</label>
+            <textarea id="greek-text" placeholder="Zadejte řecký text..."></textarea>
+        </div>
+
+        <button onclick="transcribe()">Transkriptuj</button>
+
+        <div class="output-group" style="margin-top: 30px;">
+            <label>Česká transkripce:</label>
+            <div id="output" class="output"></div>
+        </div>
+    </div>
+
+    <script>
+        const normalize = {
+            "ἀ": "α", "ἁ": "α", "ἂ": "α", "ἃ": "α", "ἄ": "α", "ἅ": "α", "ἆ": "α", "ἇ": "α",
+            "Ἀ": "Α", "Ἁ": "Α", "Ἂ": "Α", "Ἃ": "Α", "Ἄ": "Α", "Ἅ": "Α", "Ἆ": "Α", "Ἇ": "Α",
+            "ἐ": "ε", "ἑ": "ε", "ἒ": "ε", "ἓ": "ε", "ἔ": "ε", "ἕ": "ε",
+            "Ἐ": "Ε", "Ἑ": "Ε", "Ἒ": "Ε", "Ἓ": "Ε", "Ἔ": "Ε", "Ἕ": "Ε",
+            "ἠ": "η", "ἡ": "η", "ἢ": "η", "ἣ": "η", "ἤ": "η", "ἥ": "η", "ἦ": "η", "ἧ": "η",
+            "Ἠ": "Η", "Ἡ": "Η", "Ἢ": "Η", "Ἣ": "Η", "Ἤ": "Η", "Ἥ": "Η", "Ἦ": "Η", "Ἧ": "Η",
+            "ἰ": "ι", "ἱ": "ι", "ἲ": "ι", "ἳ": "ι", "ἴ": "ι", "ἵ": "ι", "ἶ": "ι", "ἷ": "ι",
+            "Ἰ": "Ι", "Ἱ": "Ι", "Ἲ": "Ι", "Ἳ": "Ι", "Ἴ": "Ι", "Ἵ": "Ι", "Ἶ": "Ι", "Ἷ": "Ι",
+            "ὀ": "ο", "ὁ": "ο", "ὂ": "ο", "ὃ": "ο", "ὄ": "ο", "ὅ": "ο",
+            "Ὀ": "Ο", "Ὁ": "Ο", "Ὂ": "Ο", "Ὃ": "Ο", "Ὄ": "Ο", "Ὅ": "Ο",
+            "ὐ": "υ", "ὑ": "υ", "ὒ": "υ", "ὓ": "υ", "ὔ": "υ", "ὕ": "υ", "ὖ": "υ", "ὗ": "υ",
+            "Ὑ": "Υ", "Ὓ": "Υ", "Ὕ": "Υ", "Ὗ": "Υ",
+            "ὠ": "ω", "ὡ": "ω", "ὢ": "ω", "ὣ": "ω", "ὤ": "ω", "ὥ": "ω", "ὦ": "ω", "ὧ": "ω",
+            "Ὠ": "Ω", "Ὡ": "Ω", "Ὢ": "Ω", "Ὣ": "Ω", "Ὤ": "Ω", "Ὥ": "Ω", "Ὦ": "Ω", "Ὧ": "Ω",
+            "ὰ": "α", "ά": "α", "ὲ": "ε", "έ": "ε", "ὴ": "η", "ή": "η", "ὶ": "ι", "ί": "ι", "ὸ": "ο", "ό": "ο", "ὺ": "υ", "ύ": "υ", "ὼ": "ω", "ώ": "ω",
+            "ᾀ": "α", "ᾁ": "α", "ᾂ": "α", "ᾃ": "α", "ᾄ": "α", "ᾅ": "α", "ᾆ": "α", "ᾇ": "α",
+            "ᾈ": "Α", "ᾉ": "Α", "ᾊ": "Α", "ᾋ": "Α", "ᾌ": "Α", "ᾍ": "Α", "ᾎ": "Α", "ᾏ": "Α",
+            "ᾐ": "η", "ᾑ": "η", "ᾒ": "η", "ᾓ": "η", "ᾔ": "η", "ᾕ": "η", "ᾖ": "η", "ᾗ": "η",
+            "ᾘ": "Η", "ᾙ": "Η", "ᾚ": "Η", "ᾛ": "Η", "ᾜ": "Η", "ᾝ": "Η", "ᾞ": "Η", "ᾟ": "Η",
+            "ᾠ": "ω", "ᾡ": "ω", "ᾢ": "ω", "ᾣ": "ω", "ᾤ": "ω", "ᾥ": "ω", "ᾦ": "ω", "ᾧ": "ω",
+            "ᾨ": "Ω", "ᾩ": "Ω", "ᾪ": "Ω", "ᾫ": "Ω", "ᾬ": "Ω", "ᾭ": "Ω", "ᾮ": "Ω", "ᾯ": "Ω",
+            "ᾲ": "α", "ᾳ": "α", "ᾴ": "α", "ᾶ": "α", "ᾷ": "α",
+            "ᾼ": "Α", "᾽": "", "ι": "",
+            "ῂ": "η", "ῃ": "η", "ῄ": "η", "ῆ": "η", "ῇ": "η",
+            "ῌ": "Η", "῍": "", "῎": "", "῏": "",
+            "ῒ": "ι", "ῖ": "ι", "ῗ": "ι",
+            "Ῐ": "Ι", "Ῑ": "Ι", "Ὶ": "Ι", "Ί": "Ι",
+            "ῲ": "ω", "ῳ": "ω", "ῴ": "ω", "ῶ": "ω", "ῷ": "ω",
+            "ῼ": "Ω", "῞": "", "῟": "", "ῠ": "υ", "ῡ": "υ", "ῢ": "υ", "ΰ": "υ", "ῤ": "ρ", "ῥ": "ρ", "ῦ": "υ", "ῧ": "υ", "Ῠ": "Υ", "Ῡ": "Υ", "Ὺ": "Υ", "Ύ": "Υ", "Ῥ": "Ρ"
+        };
+
+        const spiritusAsper = {
+            "ἁ": "h", "Ἁ": "H",
+            "ἑ": "h", "Ἑ": "H",
+            "ἡ": "h", "Ἡ": "H",
+            "ἱ": "h", "Ἱ": "H",
+            "ὁ": "h", "Ὁ": "H",
+            "ὑ": "h", "Ὑ": "H",
+            "ὡ": "h", "Ὡ": "H",
+            "ᾁ": "h", "ᾉ": "H",
+            "ᾑ": "h", "ᾘ": "H",
+            "ᾡ": "h", "ᾩ": "H"
+        };
+
+        const punctuation = {
+            ";": ";",
+            "·": ":",
+            ",": ",",
+            ".": "."
+        };
+
+        const diphthongs = {
+            "αι": "aj",
+            "ει": "ej",
+            "οι": "oj",
+            "υι": "yj",
+            "αυ": "au",
+            "ευ": "eu",
+            "ηυ": "eu",
+            "ου": "u",
+            "ωυ": "ou"
+        };
+
+        const greekToLatin = {
+            "Α": "A", "α": "a",
+            "Β": "B", "β": "b",
+            "Γ": "G", "γ": "g",
+            "Δ": "D", "δ": "d",
+            "Ε": "E", "ε": "e",
+            "Ζ": "Z", "ζ": "z",
+            "Η": "É", "η": "é",
+            "Θ": "Th", "θ": "th",
+            "Ι": "I", "ι": "i",
+            "Κ": "K", "κ": "k",
+            "Λ": "L", "λ": "l",
+            "Μ": "M", "μ": "m",
+            "Ν": "N", "ν": "n",
+            "Ξ": "X", "ξ": "x",
+            "Ο": "O", "ο": "o",
+            "Π": "P", "π": "p",
+            "Ρ": "R", "ρ": "r",
+            "Σ": "S", "σ": "s", "ς": "s",
+            "Τ": "T", "τ": "t",
+            "Υ": "Y", "υ": "y",
+            "Φ": "F", "φ": "f",
+            "Χ": "Ch", "χ": "ch",
+            "Ψ": "Ps", "ψ": "ps",
+            "Ω": "Ó", "ω": "ó"
+        };
+
+        function transcribe() {
+            const greekText = document.getElementById('greek-text').value;
+            const output = document.getElementById('output');
+            
+            // Step 1: Normalize - remove ignored diacritics and track spiritus asper
+            let normalized = "";
+            let spiritusPositions = []; // positions where 'h' should be added
+            
+            for (let i = 0; i < greekText.length; i++) {
+                const char = greekText[i];
+                
+                // Track spiritus asper
+                if (spiritusAsper[char]) {
+                    spiritusPositions.push(normalized.length);
+                }
+                
+                // Normalize character (remove diacritics)
+                if (normalize[char]) {
+                    normalized += normalize[char];
+                } else {
+                    normalized += char;
+                }
+            }
+            
+            // Step 2: Apply transcription rules to normalized text
+            let result = "";
+            let hIndex = 0;
+            
+            for (let i = 0; i < normalized.length; i++) {
+                // Add 'h' if this position has spiritus asper
+                if (spiritusPositions.includes(i)) {
+                    result += "h";
+                }
+                
+                // Check for punctuation
+                if (punctuation[normalized[i]]) {
+                    result += punctuation[normalized[i]];
+                    continue;
+                }
+                
+                // Check for diphthongs (2-character combinations)
+                if (i + 1 < normalized.length) {
+                    const twoChars = normalized.substring(i, i + 2);
+                    if (diphthongs[twoChars]) {
+                        result += diphthongs[twoChars];
+                        i++;
+                        continue;
+                    }
+                }
+                
+                // Fall back to single character mapping
+                const char = normalized[i];
+                result += greekToLatin[char] || char;
+            }
+            
+            output.textContent = result;
+        }
+    </script>
+</body>
+</html>
