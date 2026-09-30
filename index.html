@@ -190,6 +190,162 @@
         .close-btn:hover {
             background: #5568d3;
         }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .validation-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .validation-result.success {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .validation-result.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .word-diff {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 2px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+        .word-diff.correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .word-diff.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .word-diff.missing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .validation-output {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            display: none;
+            position: relative;
+        }
+
+        .validation-output.active {
+            display: block;
+        }
+
+        .validation-output h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .validation-stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .validation-stats span {
+            margin-left: 15px;
+            font-weight: 500;
+        }
+
+        .validation-stats .total {
+            color: #333;
+        }
+
+        .validation-stats .correct {
+            color: #28a745;
+        }
+
+        .validation-stats .incorrect {
+            color: #dc3545;
+        }
+
+        .validation-text {
+            color: #333;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .word-diff {
+            display: inline;
+            padding: 0;
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .word-diff.correct {
+            color: #333;
+        }
+
+        .word-diff.incorrect {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        .word-diff.incorrect .correct-hint {
+            color: #28a745;
+            font-weight: normal;
+        }
+
+        .word-diff.missing {
+            color: #856404;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -198,16 +354,39 @@
     <div class="container">
         <h1>Řečtina → Čeština</h1>
         
-        <div class="input-group">
-            <label for="greek-text">Řecký text:</label>
-            <textarea id="greek-text" placeholder="Zadejte řecký text..."></textarea>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('transcriber')">Transkriptor</button>
+            <button class="tab" onclick="switchTab('validator')">Validátor</button>
         </div>
 
-        <button onclick="transcribe()">Transkriptuj</button>
+        <div id="transcriber" class="tab-content active">
+            <div class="input-group">
+                <label for="greek-text">Řecký text:</label>
+                <textarea id="greek-text" placeholder="Zadejte řecký text..."></textarea>
+            </div>
 
-        <div class="output-group" style="margin-top: 30px;">
-            <label>Česká transkripce:</label>
-            <div id="output" class="output"></div>
+            <button onclick="transcribe()">Transkriptuj</button>
+
+            <div class="output-group" style="margin-top: 30px;">
+                <label>Česká transkripce:</label>
+                <div id="output" class="output"></div>
+            </div>
+        </div>
+
+        <div id="validator" class="tab-content">
+            <div class="input-group">
+                <label for="validator-greek">Řecký text:</label>
+                <textarea id="validator-greek" placeholder="Zadejte řecký text..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="validator-czech">Česká transkripce:</label>
+                <textarea id="validator-czech" placeholder="Zadejte českou transkripci..."></textarea>
+            </div>
+
+            <button onclick="validate()">Validuj českou transkripci</button>
+
+            <div id="validation-result" class="validation-result"></div>
         </div>
     </div>
 
@@ -358,59 +537,7 @@
         function transcribe() {
             const greekText = document.getElementById('greek-text').value;
             const output = document.getElementById('output');
-            
-            // Step 1: Normalize - remove ignored diacritics and track spiritus asper
-            let normalized = "";
-            let spiritusPositions = []; // positions where 'h' should be added
-            
-            for (let i = 0; i < greekText.length; i++) {
-                const char = greekText[i];
-                
-                // Track spiritus asper
-                if (spiritusAsper[char]) {
-                    spiritusPositions.push(normalized.length);
-                }
-                
-                // Normalize character (remove diacritics)
-                if (normalize[char]) {
-                    normalized += normalize[char];
-                } else {
-                    normalized += char;
-                }
-            }
-            
-            // Step 2: Apply transcription rules to normalized text
-            let result = "";
-            let hIndex = 0;
-            
-            for (let i = 0; i < normalized.length; i++) {
-                // Add 'h' if this position has spiritus asper
-                if (spiritusPositions.includes(i)) {
-                    result += "h";
-                }
-                
-                // Check for punctuation
-                if (punctuation[normalized[i]]) {
-                    result += punctuation[normalized[i]];
-                    continue;
-                }
-                
-                // Check for diphthongs (2-character combinations)
-                if (i + 1 < normalized.length) {
-                    const twoChars = normalized.substring(i, i + 2);
-                    if (diphthongs[twoChars]) {
-                        result += diphthongs[twoChars];
-                        i++;
-                        continue;
-                    }
-                }
-                
-                // Fall back to single character mapping
-                const char = normalized[i];
-                result += greekToLatin[char] || char;
-            }
-            
-            output.textContent = result;
+            output.textContent = generateTranscription(greekText);
         }
 
         function openModal() {
@@ -427,6 +554,124 @@
                 closeModal();
             }
         });
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function validate() {
+            const greekText = document.getElementById('validator-greek').value;
+            const userTranscription = document.getElementById('validator-czech').value;
+            const resultDiv = document.getElementById('validation-result');
+            
+            if (!greekText.trim() || !userTranscription.trim()) {
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'validation-result error';
+                resultDiv.innerHTML = 'Prosím vyplňte obě pole.';
+                return;
+            }
+            
+            // Generate correct transcription
+            const correctTranscription = generateTranscription(greekText);
+            
+            // Compare word by word
+            const userWords = userTranscription.trim().split(/\s+/);
+            const correctWords = correctTranscription.trim().split(/\s+/);
+            
+            let html = '';
+            let hasErrors = false;
+            
+            const maxLen = Math.max(userWords.length, correctWords.length);
+            
+            for (let i = 0; i < maxLen; i++) {
+                const userWord = userWords[i] || '';
+                const correctWord = correctWords[i] || '';
+                
+                if (userWord === correctWord) {
+                    html += `<span class="word-diff correct">${userWord}</span> `;
+                } else if (!userWord) {
+                    html += `<span class="word-diff missing">(chybí: ${correctWord})</span> `;
+                    hasErrors = true;
+                } else if (!correctWord) {
+                    html += `<span class="word-diff incorrect">${userWord} (nadbytečné)</span> `;
+                    hasErrors = true;
+                } else {
+                    html += `<span class="word-diff incorrect">${userWord} (správně: ${correctWord})</span> `;
+                    hasErrors = true;
+                }
+            }
+            
+            resultDiv.style.display = 'block';
+            if (hasErrors) {
+                resultDiv.className = 'validation-result error';
+                resultDiv.innerHTML = '<strong>Nalezeny chyby:</strong><br><br>' + html;
+            } else {
+                resultDiv.className = 'validation-result success';
+                resultDiv.innerHTML = '<strong>Transkripce je správná!</strong><br><br>' + html;
+            }
+        }
+
+        function generateTranscription(greekText) {
+            // Step 1: Normalize - remove ignored diacritics and track spiritus asper
+            let normalized = "";
+            let spiritusPositions = [];
+            
+            for (let i = 0; i < greekText.length; i++) {
+                const char = greekText[i];
+                
+                if (spiritusAsper[char]) {
+                    spiritusPositions.push(normalized.length);
+                }
+                
+                if (normalize[char]) {
+                    normalized += normalize[char];
+                } else {
+                    normalized += char;
+                }
+            }
+            
+            // Step 2: Apply transcription rules to normalized text
+            let result = "";
+            
+            for (let i = 0; i < normalized.length; i++) {
+                if (spiritusPositions.includes(i)) {
+                    result += "h";
+                }
+                
+                if (punctuation[normalized[i]]) {
+                    result += punctuation[normalized[i]];
+                    continue;
+                }
+                
+                if (i + 1 < normalized.length) {
+                    const twoChars = normalized.substring(i, i + 2);
+                    if (diphthongs[twoChars]) {
+                        result += diphthongs[twoChars];
+                        i++;
+                        continue;
+                    }
+                }
+                
+                const char = normalized[i];
+                result += greekToLatin[char] || char;
+            }
+            
+            return result;
+        }
     </script>
 </body>
 </html>
