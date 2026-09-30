@@ -19,6 +19,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
 
         .container {
@@ -101,9 +102,99 @@
         button:active {
             transform: translateY(0);
         }
+
+        .info-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+            transition: background 0.3s;
+            z-index: 100;
+        }
+
+        .info-icon:hover {
+            background: #5568d3;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .modal-content p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .modal-content ul {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        .modal-content li {
+            margin-bottom: 8px;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .close-btn:hover {
+            background: #5568d3;
+        }
     </style>
 </head>
 <body>
+    <div class="info-icon" onclick="openModal()">i</div>
+    
     <div class="container">
         <h1>Řečtina → Čeština</h1>
         
@@ -117,6 +208,59 @@
         <div class="output-group" style="margin-top: 30px;">
             <label>Česká transkripce:</label>
             <div id="output" class="output"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <h2>O aplikaci</h2>
+            <p>Tato aplikace provádí transkripci řeckého textu do české latinky podle phonetických pravidel.</p>
+            
+            <h3>Pravidla transkripce (podle priority):</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <thead>
+                    <tr style="background: #667eea; color: white;">
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">#</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Pravidlo</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Popis</th>
+                        <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Příklad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">1</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Normalizace</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Odstranění jemných přídechů a dalších diakritik (circumflex, trema)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">ἀ→α, ἡ→η</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">2</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Ostrý přízvuk (spiritus asper)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Přidání "h" na začátek slova</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">ὑδωρ→hydor</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">3</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Interpunkce</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Převod řecké interpunkce na českou</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">;→;, ·→:</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">4</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Dvojhlásky</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Převod jako celek, čárka se ignoruje</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">αι→aj, ει→ej, αί→aj</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">5</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Jednotlivá písmena</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Převod na české ekvivalenty, čárka = dlouhá samohláska</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Α→A, έ→é, Θ→Th</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <button class="close-btn" onclick="closeModal()">Zavřít</button>
         </div>
     </div>
 
@@ -136,7 +280,6 @@
             "Ὑ": "Υ", "Ὓ": "Υ", "Ὕ": "Υ", "Ὗ": "Υ",
             "ὠ": "ω", "ὡ": "ω", "ὢ": "ω", "ὣ": "ω", "ὤ": "ω", "ὥ": "ω", "ὦ": "ω", "ὧ": "ω",
             "Ὠ": "Ω", "Ὡ": "Ω", "Ὢ": "Ω", "Ὣ": "Ω", "Ὤ": "Ω", "Ὥ": "Ω", "Ὦ": "Ω", "Ὧ": "Ω",
-            "ὰ": "α", "ά": "α", "ὲ": "ε", "έ": "ε", "ὴ": "η", "ή": "η", "ὶ": "ι", "ί": "ι", "ὸ": "ο", "ό": "ο", "ὺ": "υ", "ύ": "υ", "ὼ": "ω", "ώ": "ω",
             "ᾀ": "α", "ᾁ": "α", "ᾂ": "α", "ᾃ": "α", "ᾄ": "α", "ᾅ": "α", "ᾆ": "α", "ᾇ": "α",
             "ᾈ": "Α", "ᾉ": "Α", "ᾊ": "Α", "ᾋ": "Α", "ᾌ": "Α", "ᾍ": "Α", "ᾎ": "Α", "ᾏ": "Α",
             "ᾐ": "η", "ᾑ": "η", "ᾒ": "η", "ᾓ": "η", "ᾔ": "η", "ᾕ": "η", "ᾖ": "η", "ᾗ": "η",
@@ -174,42 +317,42 @@
         };
 
         const diphthongs = {
-            "αι": "aj",
-            "ει": "ej",
-            "οι": "oj",
-            "υι": "yj",
-            "αυ": "au",
-            "ευ": "eu",
-            "ηυ": "eu",
-            "ου": "u",
-            "ωυ": "ou"
+            "αι": "aj", "άι": "aj", "ΑΊ": "Aj",
+            "ει": "ej", "εί": "ej", "ΕΊ": "Ej",
+            "οι": "oj", "οί": "oj", "ΟΊ": "Oj",
+            "υι": "yj", "ύι": "yj", "ΥΊ": "Yj",
+            "αυ": "au", "αύ": "au", "ΑΎ": "Au",
+            "ευ": "eu", "εύ": "eu", "ΕΎ": "Eu",
+            "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu",
+            "ου": "u", "ού": "u", "ΟΎ": "U",
+            "ωυ": "ou", "ωύ": "ou", "ΩΎ": "Ou"
         };
 
         const greekToLatin = {
-            "Α": "A", "α": "a",
+            "Α": "A", "α": "a", "ά": "á",
             "Β": "B", "β": "b",
             "Γ": "G", "γ": "g",
             "Δ": "D", "δ": "d",
-            "Ε": "E", "ε": "e",
+            "Ε": "E", "ε": "e", "έ": "é",
             "Ζ": "Z", "ζ": "z",
-            "Η": "É", "η": "é",
+            "Η": "É", "η": "é", "ή": "é",
             "Θ": "Th", "θ": "th",
-            "Ι": "I", "ι": "i",
+            "Ι": "I", "ι": "i", "ί": "í",
             "Κ": "K", "κ": "k",
             "Λ": "L", "λ": "l",
             "Μ": "M", "μ": "m",
             "Ν": "N", "ν": "n",
             "Ξ": "X", "ξ": "x",
-            "Ο": "O", "ο": "o",
+            "Ο": "O", "ο": "o", "ό": "ó",
             "Π": "P", "π": "p",
             "Ρ": "R", "ρ": "r",
             "Σ": "S", "σ": "s", "ς": "s",
             "Τ": "T", "τ": "t",
-            "Υ": "Y", "υ": "y",
+            "Υ": "Y", "υ": "y", "ύ": "ý",
             "Φ": "F", "φ": "f",
             "Χ": "Ch", "χ": "ch",
             "Ψ": "Ps", "ψ": "ps",
-            "Ω": "Ó", "ω": "ó"
+            "Ω": "Ó", "ω": "ó", "ώ": "ó"
         };
 
         function transcribe() {
@@ -269,6 +412,21 @@
             
             output.textContent = result;
         }
+
+        function openModal() {
+            document.getElementById('infoModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
     </script>
 </body>
 </html>
