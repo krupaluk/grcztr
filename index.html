@@ -355,8 +355,8 @@
         <h1>Řečtina → Čeština</h1>
         
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('transcriber')">Transkriptor</button>
-            <button class="tab" onclick="switchTab('validator')">Validátor</button>
+            <button class="tab active" onclick="switchTab(event, 'transcriber')">Transkriptor</button>
+            <button class="tab" onclick="switchTab(event, 'validator')">Validátor</button>
         </div>
 
         <div id="transcriber" class="tab-content active">
@@ -401,7 +401,7 @@
     <div class="modal" id="infoModal">
         <div class="modal-content">
             <h2>O aplikaci</h2>
-            <p>Tato aplikace provádí transkripci řeckého textu do české latinky podle phonetických pravidel.</p>
+            <p>Tato aplikace provádí transkripci řeckého textu do české latinky podle fonetických pravidel.</p>
             
             <h3>Pravidla transkripce (podle priority):</h3>
             <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -416,30 +416,42 @@
                 <tbody>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">1</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Normalizace</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Odstranění jemných přídechů a dalších diakritik (circumflex, trema)</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">ἀ→α, ἡ→η</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Dvojhlásky s ostrým přídechem</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Přídech na 2. samohlásce → „h“ na začátek dvojhlásky</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">αἱ→haj, οὗ→hu, εὑ→heu</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">2</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Ostrý přízvuk (spiritus asper)</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Přidání "h" na začátek slova</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">ὑδωρ→hydor</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Dvojhlásky</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Převod jako celek; přízvuk, jemný přídech i cirkumflex se ignorují</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">αι→aj, εἰ→ej, οὐ→u, αὐ→au</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">3</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Interpunkce</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Převod řecké interpunkce na českou</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">;→;, ·→:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Nosové gama</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">γ před γ, κ, ξ, χ se čte jako n</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">ἄγγελος→angelos, ἀγκών→ankón</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">4</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Dvojhlásky</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Převod jako celek, čárka se ignoruje</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">αι→aj, ει→ej, αί→aj</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Interpunkce</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Převod řecké interpunkce na českou</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">; (otazník)→?, ·→:, ᾽→'</td>
                     </tr>
                     <tr>
                         <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">5</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Znaky s přídechem</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Ostrý přídech → „h“; jemný přídech se ignoruje; čárka = dlouhá samohláska</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">ἁ→há, ἀ→a, ἄ→á, ὃ→hó</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">6</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Trema (diairesis)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">Samohlásky se čtou zvlášť, po samohlásce se vkládá pomlčka</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">βοΐ→bo-í, ἀΐδιος→a-ídios</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">7</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">Jednotlivá písmena</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">Převod na české ekvivalenty, čárka = dlouhá samohláska</td>
                         <td style="padding: 10px; border: 1px solid #ddd;">Α→A, έ→é, Θ→Th</td>
@@ -452,123 +464,126 @@
     </div>
 
     <script>
-        const spiritusAsper = {
-            "ἁ": "h", "Ἁ": "H",
-            "ἑ": "h", "Ἑ": "H",
-            "ἡ": "h", "Ἡ": "H",
-            "ἱ": "h", "Ἱ": "H",
-            "ὁ": "h", "Ὁ": "H",
-            "ὑ": "h", "Ὑ": "H",
-            "ὡ": "h", "Ὡ": "H",
-            "ᾁ": "h", "ᾉ": "H",
-            "ᾑ": "h", "ᾘ": "H",
-            "ᾡ": "h", "ᾩ": "H"
-        };
-
-        const combinedCharacters = {
-            "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "a", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "a",
-            "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "A", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "A", "Ἇ": "A",
-            "ἐ": "e", "ἑ": "he", "ἒ": "e", "ἓ": "e", "ἔ": "é", "ἕ": "hé",
-            "Ἐ": "E", "Ἑ": "He", "Ἒ": "E", "Ἓ": "E", "Ἔ": "É", "Ἕ": "Hé",
-            "ἠ": "é", "ἡ": "hé", "ἢ": "é", "ἣ": "é", "ἤ": "é", "ἥ": "hé", "ἦ": "é", "ἧ": "é",
-            "Ἠ": "É", "Ἡ": "Hé", "Ἢ": "É", "Ἣ": "É", "Ἤ": "É", "Ἥ": "Hé", "Ἦ": "É", "Ἧ": "É",
-            "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "i", "ἴ": "í", "ἵ": "hí", "ἶ": "i", "ἷ": "i",
-            "Ἰ": "I", "Ἱ": "Hí", "Ἲ": "I", "Ἳ": "I", "Ἴ": "Í", "Ἵ": "Hí", "Ἶ": "I", "Ἷ": "I",
-            "ὀ": "o", "ὁ": "hó", "ὂ": "o", "ὃ": "o", "ὄ": "ó", "ὅ": "hó",
-            "Ὀ": "O", "Ὁ": "Hó", "Ὂ": "O", "Ὃ": "O", "Ὄ": "Ó", "Ὅ": "Hó",
-            "ὐ": "y", "ὑ": "hý", "ὒ": "y", "ὓ": "y", "ὔ": "ý", "ὕ": "hý", "ὖ": "y", "ὗ": "y",
-            "Ὑ": "Hý", "Ὓ": "Y", "Ὕ": "Hý", "Ὗ": "Y",
-            "ὠ": "ó", "ὡ": "hó", "ὢ": "ó", "ὣ": "ó", "ὤ": "ó", "ὥ": "hó", "ὦ": "ó", "ὧ": "ó",
-            "Ὠ": "Ó", "Ὡ": "Hó", "Ὢ": "Ó", "Ὣ": "Ó", "Ὤ": "Ó", "Ὥ": "Hó", "Ὦ": "Ó", "Ὧ": "Ó",
-            "ᾀ": "a", "ᾁ": "há", "ᾂ": "a", "ᾃ": "a", "ᾄ": "á", "ᾅ": "há", "ᾆ": "a", "ᾇ": "a",
-            "ᾈ": "A", "ᾉ": "Há", "ᾊ": "A", "ᾋ": "A", "ᾌ": "Á", "ᾍ": "Há", "ᾎ": "A", "ᾏ": "A",
-            "ᾐ": "é", "ᾑ": "hé", "ᾒ": "é", "ᾓ": "é", "ᾔ": "é", "ᾕ": "hé", "ᾖ": "é", "ᾗ": "é",
-            "ᾘ": "É", "ᾙ": "Hé", "ᾚ": "É", "ᾛ": "É", "ᾜ": "É", "ᾝ": "Hé", "ᾞ": "É", "ᾟ": "É",
-            "ᾠ": "ó", "ᾡ": "hó", "ᾢ": "ó", "ᾣ": "ó", "ᾤ": "ó", "ᾥ": "hó", "ᾦ": "ó", "ᾧ": "ó",
-            "ᾨ": "Ó", "ᾩ": "Hó", "ᾪ": "Ó", "ᾫ": "Ó", "ᾬ": "Ó", "ᾭ": "Hó", "ᾮ": "Ó", "ᾯ": "Ó",
+        // Kopie rules.json – při změně pravidel zkopírujte celý obsah rules.json sem.
+        const RULES = {
+          "punctuation": {
+            ";": "?", "·": ":", ",": ",", ".": ".",
+            "᾽": "'", "’": "'", "ʼ": "'"
+          },
+          "combined_characters": {
+            "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "há", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "há",
+            "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "Há", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "A", "Ἇ": "Há",
+            "ἐ": "e", "ἑ": "he", "ἒ": "e", "ἓ": "he", "ἔ": "é", "ἕ": "hé",
+            "Ἐ": "E", "Ἑ": "He", "Ἒ": "E", "Ἓ": "He", "Ἔ": "É", "Ἕ": "Hé",
+            "ἠ": "é", "ἡ": "hé", "ἢ": "é", "ἣ": "hé", "ἤ": "é", "ἥ": "hé", "ἦ": "é", "ἧ": "hé",
+            "Ἠ": "É", "Ἡ": "Hé", "Ἢ": "É", "Ἣ": "Hé", "Ἤ": "É", "Ἥ": "Hé", "Ἦ": "É", "Ἧ": "Hé",
+            "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "hí", "ἴ": "í", "ἵ": "hí", "ἶ": "i", "ἷ": "hí",
+            "Ἰ": "I", "Ἱ": "Hí", "Ἲ": "I", "Ἳ": "Hí", "Ἴ": "Í", "Ἵ": "Hí", "Ἶ": "I", "Ἷ": "Hí",
+            "ὀ": "o", "ὁ": "hó", "ὂ": "o", "ὃ": "hó", "ὄ": "ó", "ὅ": "hó",
+            "Ὀ": "O", "Ὁ": "Hó", "Ὂ": "O", "Ὃ": "Hó", "Ὄ": "Ó", "Ὅ": "Hó",
+            "ὐ": "y", "ὑ": "hý", "ὒ": "y", "ὓ": "hý", "ὔ": "ý", "ὕ": "hý", "ὖ": "y", "ὗ": "hý",
+            "Ὑ": "Hý", "Ὓ": "Hý", "Ὕ": "Hý", "Ὗ": "Hý",
+            "ὠ": "ó", "ὡ": "hó", "ὢ": "ó", "ὣ": "hó", "ὤ": "ó", "ὥ": "hó", "ὦ": "ó", "ὧ": "hó",
+            "Ὠ": "Ó", "Ὡ": "Hó", "Ὢ": "Ó", "Ὣ": "Hó", "Ὤ": "Ó", "Ὥ": "Hó", "Ὦ": "Ó", "Ὧ": "Hó",
+            "ᾀ": "a", "ᾁ": "há", "ᾂ": "a", "ᾃ": "há", "ᾄ": "á", "ᾅ": "há", "ᾆ": "a", "ᾇ": "há",
+            "ᾈ": "A", "ᾉ": "Há", "ᾊ": "A", "ᾋ": "Há", "ᾌ": "Á", "ᾍ": "Há", "ᾎ": "A", "ᾏ": "Há",
+            "ᾐ": "é", "ᾑ": "hé", "ᾒ": "é", "ᾓ": "hé", "ᾔ": "é", "ᾕ": "hé", "ᾖ": "é", "ᾗ": "hé",
+            "ᾘ": "É", "ᾙ": "Hé", "ᾚ": "É", "ᾛ": "Hé", "ᾜ": "É", "ᾝ": "Hé", "ᾞ": "É", "ᾟ": "Hé",
+            "ᾠ": "ó", "ᾡ": "hó", "ᾢ": "ó", "ᾣ": "hó", "ᾤ": "ó", "ᾥ": "hó", "ᾦ": "ó", "ᾧ": "hó",
+            "ᾨ": "Ó", "ᾩ": "Hó", "ᾪ": "Ó", "ᾫ": "Hó", "ᾬ": "Ó", "ᾭ": "Hó", "ᾮ": "Ó", "ᾯ": "Hó",
             "ᾲ": "a", "ᾳ": "a", "ᾴ": "á", "ᾶ": "a", "ᾷ": "a",
             "ᾼ": "A",
+            "ᾰ": "a", "ᾱ": "a", "Ᾰ": "A", "Ᾱ": "A", "Ὰ": "A",
             "ῂ": "é", "ῃ": "é", "ῄ": "é", "ῆ": "é", "ῇ": "é",
             "ῌ": "É",
-            "ῒ": "i", "ῖ": "i", "ῗ": "i",
-            "Ῐ": "I", "Ῑ": "I", "Ὶ": "Í", "Ί": "I",
+            "ῖ": "i",
+            "Ῐ": "I", "Ῑ": "I", "Ὶ": "I",
             "ῲ": "ó", "ῳ": "ó", "ῴ": "ó", "ῶ": "ó", "ῷ": "ó",
             "ῼ": "Ó",
-            "ῠ": "y", "ῡ": "y", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y", "ῧ": "y",
-            "Ῠ": "Y", "Ῡ": "Y", "Ὺ": "Y", "Ύ": "Y", "Ῥ": "R"
-        };
-
-        const punctuation = {
-            ";": ";",
-            "·": ":",
-            ",": ",",
-            ".": "."
-        };
-
-        const diphthongsWithAsper = {
-            "αἱ": "haj", "αἵ": "haj", "αἷ": "haj",
-            "εἱ": "hej", "εἵ": "hej", "εἷ": "hej",
-            "οἱ": "hoj", "οἵ": "hoj", "οἷ": "hoj",
-            "υἱ": "hyj", "υἵ": "hyj", "υἷ": "hyj",
-            "αὑ": "hau", "αὕ": "hau", "αὗ": "hau",
-            "εὑ": "heu", "εὕ": "heu", "εὗ": "heu",
-            "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
-            "οὑ": "hou", "οὕ": "hou", "οὗ": "hou",
-            "ωὑ": "hou", "ωὕ": "hou", "ωὗ": "hou",
-            "Αἱ": "Haj", "Αἵ": "Haj", "Αἷ": "Haj",
-            "Εἱ": "Hej", "Εἵ": "Hej", "Εἷ": "Hej",
-            "Οἱ": "Hoj", "Οἵ": "Hoj", "Οἷ": "Hoj",
-            "Υἱ": "Hyj", "Υἵ": "Hyj", "Υἷ": "Hyj",
-            "Αὑ": "Hau", "Αὕ": "Hau", "Αὗ": "Hau",
-            "Εὑ": "Heu", "Εὕ": "Heu", "Εὗ": "Heu",
-            "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu",
-            "Οὑ": "Hou", "Οὕ": "Hou", "Οὗ": "Hou",
-            "Ωὑ": "Hou", "Ωὕ": "Hou", "Ωὗ": "Hou"
-        };
-
-        const diphthongs = {
-            "αι": "aj", "άι": "aj", "αὶ": "aj", "ΑΊ": "Aj", "Αὶ": "Aj",
-            "ει": "ej", "εί": "ej", "εὶ": "ej", "ΕΊ": "Ej", "Εὶ": "Ej",
-            "οι": "oj", "οί": "oj", "οὶ": "oj", "ΟΊ": "Oj", "Οὶ": "Oj",
-            "υι": "yj", "ύι": "yj", "υὶ": "yj", "ΥΊ": "Yj", "Υὶ": "Yj",
-            "αυ": "au", "αύ": "au", "ΑΎ": "Au",
-            "ευ": "eu", "εύ": "eu", "ΕΎ": "Eu",
-            "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu",
-            "ου": "u", "ού": "u", "ΟΎ": "U",
-            "ωυ": "ou", "ωύ": "ou", "ΩΎ": "Ou"
-        };
-
-        const greekToLatin = {
-            "Α": "A", "α": "a", "ά": "á", "ὰ": "a", "ᾶ": "a",
+            "ῠ": "y", "ῡ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y",
+            "Ῠ": "Y", "Ῡ": "Y", "Ὺ": "Y", "Ῥ": "R",
+            "ῐ": "i", "ῑ": "i", "Ὲ": "E", "Ὴ": "É", "Ὸ": "O", "Ὼ": "Ó"
+          },
+          "diphthongs_with_asper": {
+            "αἱ": "haj", "αἵ": "haj", "αἳ": "haj", "αἷ": "haj", "Αἱ": "Haj", "Αἵ": "Haj", "Αἳ": "Haj", "Αἷ": "Haj",
+            "εἱ": "hej", "εἵ": "hej", "εἳ": "hej", "εἷ": "hej", "Εἱ": "Hej", "Εἵ": "Hej", "Εἳ": "Hej", "Εἷ": "Hej",
+            "οἱ": "hoj", "οἵ": "hoj", "οἳ": "hoj", "οἷ": "hoj", "Οἱ": "Hoj", "Οἵ": "Hoj", "Οἳ": "Hoj", "Οἷ": "Hoj",
+            "υἱ": "hyj", "υἵ": "hyj", "υἳ": "hyj", "υἷ": "hyj", "Υἱ": "Hyj", "Υἵ": "Hyj", "Υἳ": "Hyj", "Υἷ": "Hyj",
+            "αὑ": "hau", "αὕ": "hau", "αὓ": "hau", "αὗ": "hau", "Αὑ": "Hau", "Αὕ": "Hau", "Αὓ": "Hau", "Αὗ": "Hau",
+            "εὑ": "heu", "εὕ": "heu", "εὓ": "heu", "εὗ": "heu", "Εὑ": "Heu", "Εὕ": "Heu", "Εὓ": "Heu", "Εὗ": "Heu",
+            "ηὑ": "heu", "ηὕ": "heu", "ηὓ": "heu", "ηὗ": "heu", "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὓ": "Heu", "Ηὗ": "Heu",
+            "οὑ": "hu", "οὕ": "hu", "οὓ": "hu", "οὗ": "hu", "Οὑ": "Hu", "Οὕ": "Hu", "Οὓ": "Hu", "Οὗ": "Hu",
+            "ωὑ": "hou", "ωὕ": "hou", "ωὓ": "hou", "ωὗ": "hou", "Ωὑ": "Hou", "Ωὕ": "Hou", "Ωὓ": "Hou", "Ωὗ": "Hou"
+          },
+          "diphthongs": {
+            "αι": "aj", "αί": "aj", "αὶ": "aj", "αῖ": "aj", "αἰ": "aj", "αἴ": "aj", "αἲ": "aj", "αἶ": "aj",
+            "Αι": "Aj", "Αί": "Aj", "Αὶ": "Aj", "Αῖ": "Aj", "Αἰ": "Aj", "Αἴ": "Aj", "Αἲ": "Aj", "Αἶ": "Aj",
+            "ει": "ej", "εί": "ej", "εὶ": "ej", "εῖ": "ej", "εἰ": "ej", "εἴ": "ej", "εἲ": "ej", "εἶ": "ej",
+            "Ει": "Ej", "Εί": "Ej", "Εὶ": "Ej", "Εῖ": "Ej", "Εἰ": "Ej", "Εἴ": "Ej", "Εἲ": "Ej", "Εἶ": "Ej",
+            "οι": "oj", "οί": "oj", "οὶ": "oj", "οῖ": "oj", "οἰ": "oj", "οἴ": "oj", "οἲ": "oj", "οἶ": "oj",
+            "Οι": "Oj", "Οί": "Oj", "Οὶ": "Oj", "Οῖ": "Oj", "Οἰ": "Oj", "Οἴ": "Oj", "Οἲ": "Oj", "Οἶ": "Oj",
+            "υι": "yj", "υί": "yj", "υὶ": "yj", "υῖ": "yj", "υἰ": "yj", "υἴ": "yj", "υἲ": "yj", "υἶ": "yj",
+            "Υι": "Yj", "Υί": "Yj", "Υὶ": "Yj", "Υῖ": "Yj", "Υἰ": "Yj", "Υἴ": "Yj", "Υἲ": "Yj", "Υἶ": "Yj",
+            "αυ": "au", "αύ": "au", "αὺ": "au", "αῦ": "au", "αὐ": "au", "αὔ": "au", "αὒ": "au", "αὖ": "au",
+            "Αυ": "Au", "Αύ": "Au", "Αὺ": "Au", "Αῦ": "Au", "Αὐ": "Au", "Αὔ": "Au", "Αὒ": "Au", "Αὖ": "Au",
+            "ευ": "eu", "εύ": "eu", "εὺ": "eu", "εῦ": "eu", "εὐ": "eu", "εὔ": "eu", "εὒ": "eu", "εὖ": "eu",
+            "Ευ": "Eu", "Εύ": "Eu", "Εὺ": "Eu", "Εῦ": "Eu", "Εὐ": "Eu", "Εὔ": "Eu", "Εὒ": "Eu", "Εὖ": "Eu",
+            "ηυ": "eu", "ηύ": "eu", "ηὺ": "eu", "ηῦ": "eu", "ηὐ": "eu", "ηὔ": "eu", "ηὒ": "eu", "ηὖ": "eu",
+            "Ηυ": "Eu", "Ηύ": "Eu", "Ηὺ": "Eu", "Ηῦ": "Eu", "Ηὐ": "Eu", "Ηὔ": "Eu", "Ηὒ": "Eu", "Ηὖ": "Eu",
+            "ου": "u", "ού": "u", "οὺ": "u", "οῦ": "u", "οὐ": "u", "οὔ": "u", "οὒ": "u", "οὖ": "u",
+            "Ου": "U", "Ού": "U", "Οὺ": "U", "Οῦ": "U", "Οὐ": "U", "Οὔ": "U", "Οὒ": "U", "Οὖ": "U",
+            "ωυ": "ou", "ωύ": "ou", "ωὺ": "ou", "ωῦ": "ou", "ωὐ": "ou", "ωὔ": "ou", "ωὒ": "ou", "ωὖ": "ou",
+            "Ωυ": "Ou", "Ωύ": "Ou", "Ωὺ": "Ou", "Ωῦ": "Ou", "Ωὐ": "Ou", "Ωὔ": "Ou", "Ωὒ": "Ou", "Ωὖ": "Ou",
+            "ΑΙ": "AJ", "ΑΊ": "AJ", "ΕΙ": "EJ", "ΕΊ": "EJ", "ΟΙ": "OJ", "ΟΊ": "OJ", "ΥΙ": "YJ", "ΥΊ": "YJ",
+            "ΑΥ": "AU", "ΑΎ": "AU", "ΕΥ": "EU", "ΕΎ": "EU", "ΗΥ": "EU", "ΗΎ": "EU", "ΟΥ": "U", "ΟΎ": "U", "ΩΥ": "OU", "ΩΎ": "OU"
+          },
+          "nasal_gamma": {
+            "γγ": "ng", "γκ": "nk", "γξ": "nx", "γχ": "nch",
+            "ΓΓ": "NG", "ΓΚ": "NK", "ΓΞ": "NX", "ΓΧ": "NCH"
+          },
+          "greek_to_latin": {
+            "Α": "A", "α": "a", "ά": "á", "ὰ": "a", "ᾶ": "a", "Ά": "Á",
             "Β": "B", "β": "b",
             "Γ": "G", "γ": "g",
             "Δ": "D", "δ": "d",
-            "Ε": "E", "ε": "e", "έ": "é", "ὲ": "e",
+            "Ε": "E", "ε": "e", "έ": "é", "ὲ": "e", "Έ": "É",
             "Ζ": "Z", "ζ": "z",
-            "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é",
+            "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é", "Ή": "É",
             "Θ": "Th", "θ": "th",
-            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ῖ": "i", "ϊ": "i", "ΐ": "í",
+            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ῖ": "i", "Ί": "Í",
             "Κ": "K", "κ": "k",
             "Λ": "L", "λ": "l",
             "Μ": "M", "μ": "m",
             "Ν": "N", "ν": "n",
             "Ξ": "X", "ξ": "x",
-            "Ο": "O", "ο": "o", "ό": "ó", "ὸ": "o",
+            "Ο": "O", "ο": "o", "ό": "ó", "ὸ": "o", "Ό": "Ó",
             "Π": "P", "π": "p",
             "Ρ": "R", "ρ": "r",
-            "Σ": "S", "σ": "s", "ς": "s",
+            "Σ": "S", "σ": "s", "ς": "s", "Ϲ": "S", "ϲ": "s",
             "Τ": "T", "τ": "t",
-            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "ϋ": "y", "ΰ": "ý",
+            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "Ύ": "Ý",
             "Φ": "F", "φ": "f",
             "Χ": "Ch", "χ": "ch",
             "Ψ": "Ps", "ψ": "ps",
-            "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó"
+            "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó", "Ώ": "Ó"
+          },
+          "diaeresis_chars": {
+            "ϊ": "i", "ΐ": "í", "ῒ": "i", "ῗ": "i", "Ϊ": "I",
+            "ϋ": "y", "ΰ": "ý", "ῢ": "y", "ῧ": "y", "Ϋ": "Y"
+          }
         };
 
-        const diaeresisChars = {
-            "ϊ": "i", "ΐ": "í",
-            "ϋ": "y", "ΰ": "ý"
-        };
+        const nfcKeys = obj => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k.normalize('NFC'), v]));
+        const punctuation = nfcKeys(RULES.punctuation);
+        const combinedCharacters = nfcKeys(RULES.combined_characters);
+        const diphthongsWithAsper = nfcKeys(RULES.diphthongs_with_asper);
+        const diphthongs = nfcKeys(RULES.diphthongs);
+        const nasalGamma = nfcKeys(RULES.nasal_gamma);
+        const greekToLatin = nfcKeys(RULES.greek_to_latin);
+        const diaeresisChars = nfcKeys(RULES.diaeresis_chars);
+
+        const twoCharRules = [diphthongsWithAsper, diphthongs, nasalGamma];
+        const oneCharRules = [punctuation, combinedCharacters];
 
         const vowels = new Set(['a', 'á', 'e', 'é', 'i', 'í', 'o', 'ó', 'u', 'y', 'ý', 'A', 'Á', 'E', 'É', 'I', 'Í', 'O', 'Ó', 'U', 'Y', 'Ý']);
 
@@ -593,22 +608,52 @@
             }
         });
 
-        function switchTab(tabName) {
-            // Hide all tab contents
+        function switchTab(event, tabName) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
-            // Remove active class from all tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Show selected tab content
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // Words are compared without surrounding punctuation, so "lógos," matches "lógos".
+        function comparableWord(word) {
+            return word.normalize('NFC').replace(/^[.,;:?!'"()\-–—]+|[.,;:?!'"()\-–—]+$/g, '');
+        }
+
+        // Longest common subsequence alignment, so one missing/extra word does not shift all following words.
+        function alignWords(userWords, correctWords) {
+            const u = userWords.map(comparableWord);
+            const c = correctWords.map(comparableWord);
+            const n = u.length, m = c.length;
+            const lcs = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+            for (let i = n - 1; i >= 0; i--) {
+                for (let j = m - 1; j >= 0; j--) {
+                    lcs[i][j] = u[i] === c[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+                }
+            }
+
+            const ops = [];
+            let i = 0, j = 0;
+            while (i < n || j < m) {
+                if (i < n && j < m && u[i] === c[j]) {
+                    ops.push({ type: 'correct', user: userWords[i++], correct: correctWords[j++] });
+                } else if (i < n && j < m && lcs[i + 1][j + 1] === lcs[i][j]) {
+                    ops.push({ type: 'incorrect', user: userWords[i++], correct: correctWords[j++] });
+                } else if (j < m && (i === n || lcs[i][j + 1] >= lcs[i + 1][j])) {
+                    ops.push({ type: 'missing', correct: correctWords[j++] });
+                } else {
+                    ops.push({ type: 'extra', user: userWords[i++] });
+                }
+            }
+            return ops;
         }
 
         function validate() {
@@ -616,109 +661,81 @@
             const userTranscription = document.getElementById('validator-czech').value;
             const outputDiv = document.getElementById('validation-output');
             const textDiv = document.getElementById('validation-text');
-            
+
             if (!greekText.trim() || !userTranscription.trim()) {
                 alert('Prosím vyplňte obě pole.');
                 return;
             }
-            
-            // Generate correct transcription
+
             const correctTranscription = generateTranscription(greekText);
-            
-            // Compare word by word
             const userWords = userTranscription.trim().split(/\s+/);
             const correctWords = correctTranscription.trim().split(/\s+/);
-            
+            const ops = alignWords(userWords, correctWords);
+
             let html = '';
             let correctCount = 0;
-            let incorrectCount = 0;
-            
-            const maxLen = Math.max(userWords.length, correctWords.length);
-            
-            for (let i = 0; i < maxLen; i++) {
-                const userWord = userWords[i] || '';
-                const correctWord = correctWords[i] || '';
-                
-                if (userWord === correctWord) {
-                    html += `<span class="word-diff correct">${userWord}</span> `;
+            for (const op of ops) {
+                const user = escapeHtml(op.user || '');
+                const correct = escapeHtml(op.correct || '');
+                if (op.type === 'correct') {
+                    html += `<span class="word-diff correct">${user}</span> `;
                     correctCount++;
-                } else if (!userWord) {
-                    html += `<span class="word-diff missing">(chybí: ${correctWord})</span> `;
-                    incorrectCount++;
-                } else if (!correctWord) {
-                    html += `<span class="word-diff incorrect">${userWord} (nadbytečné)</span> `;
-                    incorrectCount++;
+                } else if (op.type === 'missing') {
+                    html += `<span class="word-diff missing">(chybí: ${correct})</span> `;
+                } else if (op.type === 'extra') {
+                    html += `<span class="word-diff incorrect">${user} (nadbytečné)</span> `;
                 } else {
-                    html += `<span class="word-diff incorrect">${userWord} <span class="correct-hint">(správně: ${correctWord})</span></span> `;
-                    incorrectCount++;
+                    html += `<span class="word-diff incorrect">${user} <span class="correct-hint">(správně: ${correct})</span></span> `;
                 }
             }
-            
-            // Update stats
-            document.getElementById('total-words').textContent = maxLen;
+
+            document.getElementById('total-words').textContent = ops.length;
             document.getElementById('correct-words').textContent = correctCount;
-            document.getElementById('incorrect-words').textContent = incorrectCount;
-            
-            // Show output
+            document.getElementById('incorrect-words').textContent = ops.length - correctCount;
+
             textDiv.innerHTML = html;
             outputDiv.classList.add('active');
         }
 
-        function generateTranscription(greekText) {
+        function generateTranscription(input) {
+            // NFC unifies oxia/tonos variants and combining-accent sequences with the precomposed keys in RULES.
+            const greekText = input.normalize('NFC');
             let result = "";
             let i = 0;
-            
+
+            outer:
             while (i < greekText.length) {
-                // Check for 2-character combinations with spiritus asper (highest priority)
-                if (i + 1 < greekText.length) {
-                    const twoChars = greekText.substring(i, i + 2);
-                    if (diphthongsWithAsper[twoChars]) {
-                        result += diphthongsWithAsper[twoChars];
+                const twoChars = greekText.substring(i, i + 2);
+                for (const table of twoCharRules) {
+                    if (twoChars.length === 2 && table[twoChars] !== undefined) {
+                        result += table[twoChars];
                         i += 2;
-                        continue;
+                        continue outer;
                     }
                 }
-                
-                // Check for 2-character diphthongs
-                if (i + 1 < greekText.length) {
-                    const twoChars = greekText.substring(i, i + 2);
-                    if (diphthongs[twoChars]) {
-                        result += diphthongs[twoChars];
-                        i += 2;
-                        continue;
+
+                const ch = greekText[i];
+                for (const table of oneCharRules) {
+                    if (table[ch] !== undefined) {
+                        result += table[ch];
+                        i++;
+                        continue outer;
                     }
                 }
-                
-                // Check for punctuation
-                if (punctuation[greekText[i]]) {
-                    result += punctuation[greekText[i]];
-                    i++;
-                    continue;
-                }
-                
-                // Check for combined characters (with diacritics) - these are final, no further processing
-                if (combinedCharacters[greekText[i]]) {
-                    result += combinedCharacters[greekText[i]];
-                    i++;
-                    continue;
-                }
-                
-                // Check for diaeresis characters
-                if (diaeresisChars[greekText[i]]) {
-                    // Check if previous character (in result) is a vowel
+
+                if (diaeresisChars[ch] !== undefined) {
                     if (result.length > 0 && vowels.has(result[result.length - 1])) {
                         result += "-";
                     }
-                    result += diaeresisChars[greekText[i]];
+                    result += diaeresisChars[ch];
                     i++;
                     continue;
                 }
-                
-                // Fall back to single character mapping
-                result += greekToLatin[greekText[i]] || greekText[i];
+
+                result += greekToLatin[ch] ?? ch;
                 i++;
             }
-            
+
             return result;
         }
     </script>
