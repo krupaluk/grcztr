@@ -42,6 +42,21 @@
             margin-bottom: 20px;
         }
 
+        .input-group-with-test {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .input-group-with-test label {
+            margin: 0;
+        }
+
+        .input-group-with-test + .input-group {
+            margin-top: 0;
+        }
+
         label {
             display: block;
             color: #555;
@@ -189,6 +204,25 @@
 
         .close-btn:hover {
             background: #5568d3;
+        }
+
+        .test-button {
+            padding: 8px 12px;
+            background: #888;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .test-button:hover {
+            background: #777;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
         }
 
         .tabs {
@@ -360,8 +394,14 @@
         </div>
 
         <div id="transcriber" class="tab-content active">
-            <div class="input-group">
+            <div class="input-group-with-test">
                 <label for="greek-text">Řecký text:</label>
+                <div class="button-group">
+                    <button class="test-button" onclick="clearTranscriber()">Vymazat</button>
+                    <button class="test-button" onclick="loadTestExampleTranscriber()">Testovací příklad</button>
+                </div>
+            </div>
+            <div class="input-group">
                 <textarea id="greek-text" placeholder="Zadejte řecký text..."></textarea>
             </div>
 
@@ -374,8 +414,14 @@
         </div>
 
         <div id="validator" class="tab-content">
-            <div class="input-group">
+            <div class="input-group-with-test">
                 <label for="validator-greek">Řecký text:</label>
+                <div class="button-group">
+                    <button class="test-button" onclick="clearValidator()">Vymazat</button>
+                    <button class="test-button" onclick="loadTestExample()">Testovací příklad</button>
+                </div>
+            </div>
+            <div class="input-group">
                 <textarea id="validator-greek" placeholder="Zadejte řecký text..."></textarea>
             </div>
 
@@ -467,8 +513,7 @@
         // Kopie rules.json – při změně pravidel zkopírujte celý obsah rules.json sem.
         const RULES = {
           "punctuation": {
-            ";": "?", "·": ":", ",": ",", ".": ".",
-            "᾽": "'", "’": "'", "ʼ": "'"
+            ";": "?", ";": "?", "·": ":", "·": "", ",": ",", ".": "."
           },
           "combined_characters": {
             "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "há", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "há",
@@ -505,37 +550,15 @@
             "ῐ": "i", "ῑ": "i", "Ὲ": "E", "Ὴ": "É", "Ὸ": "O", "Ὼ": "Ó"
           },
           "diphthongs_with_asper": {
-            "αἱ": "haj", "αἵ": "haj", "αἳ": "haj", "αἷ": "haj", "Αἱ": "Haj", "Αἵ": "Haj", "Αἳ": "Haj", "Αἷ": "Haj",
-            "εἱ": "hej", "εἵ": "hej", "εἳ": "hej", "εἷ": "hej", "Εἱ": "Hej", "Εἵ": "Hej", "Εἳ": "Hej", "Εἷ": "Hej",
-            "οἱ": "hoj", "οἵ": "hoj", "οἳ": "hoj", "οἷ": "hoj", "Οἱ": "Hoj", "Οἵ": "Hoj", "Οἳ": "Hoj", "Οἷ": "Hoj",
-            "υἱ": "hyj", "υἵ": "hyj", "υἳ": "hyj", "υἷ": "hyj", "Υἱ": "Hyj", "Υἵ": "Hyj", "Υἳ": "Hyj", "Υἷ": "Hyj",
             "αὑ": "hau", "αὕ": "hau", "αὓ": "hau", "αὗ": "hau", "Αὑ": "Hau", "Αὕ": "Hau", "Αὓ": "Hau", "Αὗ": "Hau",
-            "εὑ": "heu", "εὕ": "heu", "εὓ": "heu", "εὗ": "heu", "Εὑ": "Heu", "Εὕ": "Heu", "Εὓ": "Heu", "Εὗ": "Heu",
-            "ηὑ": "heu", "ηὕ": "heu", "ηὓ": "heu", "ηὗ": "heu", "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὓ": "Heu", "Ηὗ": "Heu",
-            "οὑ": "hu", "οὕ": "hu", "οὓ": "hu", "οὗ": "hu", "Οὑ": "Hu", "Οὕ": "Hu", "Οὓ": "Hu", "Οὗ": "Hu",
-            "ωὑ": "hou", "ωὕ": "hou", "ωὓ": "hou", "ωὗ": "hou", "Ωὑ": "Hou", "Ωὕ": "Hou", "Ωὓ": "Hou", "Ωὗ": "Hou"
+            "ηὑ": "heu", "ηὕ": "heu", "ηὓ": "heu", "ηὗ": "heu", "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὓ": "Heu", "Ηὗ": "Heu"
           },
           "diphthongs": {
-            "αι": "aj", "αί": "aj", "αὶ": "aj", "αῖ": "aj", "αἰ": "aj", "αἴ": "aj", "αἲ": "aj", "αἶ": "aj",
-            "Αι": "Aj", "Αί": "Aj", "Αὶ": "Aj", "Αῖ": "Aj", "Αἰ": "Aj", "Αἴ": "Aj", "Αἲ": "Aj", "Αἶ": "Aj",
-            "ει": "ej", "εί": "ej", "εὶ": "ej", "εῖ": "ej", "εἰ": "ej", "εἴ": "ej", "εἲ": "ej", "εἶ": "ej",
-            "Ει": "Ej", "Εί": "Ej", "Εὶ": "Ej", "Εῖ": "Ej", "Εἰ": "Ej", "Εἴ": "Ej", "Εἲ": "Ej", "Εἶ": "Ej",
-            "οι": "oj", "οί": "oj", "οὶ": "oj", "οῖ": "oj", "οἰ": "oj", "οἴ": "oj", "οἲ": "oj", "οἶ": "oj",
-            "Οι": "Oj", "Οί": "Oj", "Οὶ": "Oj", "Οῖ": "Oj", "Οἰ": "Oj", "Οἴ": "Oj", "Οἲ": "Oj", "Οἶ": "Oj",
-            "υι": "yj", "υί": "yj", "υὶ": "yj", "υῖ": "yj", "υἰ": "yj", "υἴ": "yj", "υἲ": "yj", "υἶ": "yj",
-            "Υι": "Yj", "Υί": "Yj", "Υὶ": "Yj", "Υῖ": "Yj", "Υἰ": "Yj", "Υἴ": "Yj", "Υἲ": "Yj", "Υἶ": "Yj",
             "αυ": "au", "αύ": "au", "αὺ": "au", "αῦ": "au", "αὐ": "au", "αὔ": "au", "αὒ": "au", "αὖ": "au",
             "Αυ": "Au", "Αύ": "Au", "Αὺ": "Au", "Αῦ": "Au", "Αὐ": "Au", "Αὔ": "Au", "Αὒ": "Au", "Αὖ": "Au",
-            "ευ": "eu", "εύ": "eu", "εὺ": "eu", "εῦ": "eu", "εὐ": "eu", "εὔ": "eu", "εὒ": "eu", "εὖ": "eu",
-            "Ευ": "Eu", "Εύ": "Eu", "Εὺ": "Eu", "Εῦ": "Eu", "Εὐ": "Eu", "Εὔ": "Eu", "Εὒ": "Eu", "Εὖ": "Eu",
             "ηυ": "eu", "ηύ": "eu", "ηὺ": "eu", "ηῦ": "eu", "ηὐ": "eu", "ηὔ": "eu", "ηὒ": "eu", "ηὖ": "eu",
             "Ηυ": "Eu", "Ηύ": "Eu", "Ηὺ": "Eu", "Ηῦ": "Eu", "Ηὐ": "Eu", "Ηὔ": "Eu", "Ηὒ": "Eu", "Ηὖ": "Eu",
-            "ου": "u", "ού": "u", "οὺ": "u", "οῦ": "u", "οὐ": "u", "οὔ": "u", "οὒ": "u", "οὖ": "u",
-            "Ου": "U", "Ού": "U", "Οὺ": "U", "Οῦ": "U", "Οὐ": "U", "Οὔ": "U", "Οὒ": "U", "Οὖ": "U",
-            "ωυ": "ou", "ωύ": "ou", "ωὺ": "ou", "ωῦ": "ou", "ωὐ": "ou", "ωὔ": "ou", "ωὒ": "ou", "ωὖ": "ou",
-            "Ωυ": "Ou", "Ωύ": "Ou", "Ωὺ": "Ou", "Ωῦ": "Ou", "Ωὐ": "Ou", "Ωὔ": "Ou", "Ωὒ": "Ou", "Ωὖ": "Ou",
-            "ΑΙ": "AJ", "ΑΊ": "AJ", "ΕΙ": "EJ", "ΕΊ": "EJ", "ΟΙ": "OJ", "ΟΊ": "OJ", "ΥΙ": "YJ", "ΥΊ": "YJ",
-            "ΑΥ": "AU", "ΑΎ": "AU", "ΕΥ": "EU", "ΕΎ": "EU", "ΗΥ": "EU", "ΗΎ": "EU", "ΟΥ": "U", "ΟΎ": "U", "ΩΥ": "OU", "ΩΎ": "OU"
+            "ΑΥ": "AU", "ΑΎ": "AU", "ΗΥ": "EU", "ΗΎ": "EU"
           },
           "nasal_gamma": {
             "γγ": "ng", "γκ": "nk", "γξ": "nx", "γχ": "nch",
@@ -574,7 +597,8 @@
         };
 
         const nfcKeys = obj => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k.normalize('NFC'), v]));
-        const punctuation = nfcKeys(RULES.punctuation);
+        // Punctuation keys stay raw: NFC would fold ano teleia (U+0387) into middle dot (U+00B7).
+        const punctuation = RULES.punctuation;
         const combinedCharacters = nfcKeys(RULES.combined_characters);
         const diphthongsWithAsper = nfcKeys(RULES.diphthongs_with_asper);
         const diphthongs = nfcKeys(RULES.diphthongs);
@@ -619,13 +643,33 @@
             event.currentTarget.classList.add('active');
         }
 
+        function loadTestExample() {
+            document.getElementById('validator-greek').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
+            document.getElementById('validator-czech').value = 'leípetai hós estin taútei d᾿ epí sémat᾿easi polla mál᾿, hós agénétov';
+        }
+
+        function clearValidator() {
+            document.getElementById('validator-greek').value = '';
+            document.getElementById('validator-czech').value = '';
+            document.getElementById('validation-output').classList.remove('active');
+        }
+
+        function loadTestExampleTranscriber() {
+            document.getElementById('greek-text').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
+        }
+
+        function clearTranscriber() {
+            document.getElementById('greek-text').value = '';
+            document.getElementById('output').textContent = '';
+        }
+
         function escapeHtml(text) {
             return text.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         }
 
         // Words are compared without surrounding punctuation, so "lógos," matches "lógos".
         function comparableWord(word) {
-            return word.normalize('NFC').replace(/^[.,;:?!'"()\-–—]+|[.,;:?!'"()\-–—]+$/g, '');
+            return word.normalize('NFC').replace(/^[.,;:?!'"()\-–—·\u0387«»„“”‹›‘’]+|[.,;:?!'"()\-–—·\u0387«»„“”‹›‘’]+$/g, '');
         }
 
         // Longest common subsequence alignment, so one missing/extra word does not shift all following words.
@@ -697,9 +741,23 @@
             outputDiv.classList.add('active');
         }
 
+        // NFC unifies oxia/tonos variants and combining-accent sequences with the precomposed keys in RULES,
+        // except for punctuation that NFC would change (e.g. U+0387, U+037E), which has its own rules.
+        function normalizeInput(text) {
+            let out = '', buffer = '';
+            for (const ch of text) {
+                if (punctuation[ch] !== undefined && ch.normalize('NFC') !== ch) {
+                    out += buffer.normalize('NFC') + ch;
+                    buffer = '';
+                } else {
+                    buffer += ch;
+                }
+            }
+            return out + buffer.normalize('NFC');
+        }
+
         function generateTranscription(input) {
-            // NFC unifies oxia/tonos variants and combining-accent sequences with the precomposed keys in RULES.
-            const greekText = input.normalize('NFC');
+            const greekText = normalizeInput(input);
             let result = "";
             let i = 0;
 
