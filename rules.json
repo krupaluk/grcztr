@@ -63,6 +63,13 @@
     "δ᾿": "dé",
     "Δ᾿": "Dé"
   },
+  "validation_equivalents": {
+    "dé": ["d᾿"],
+    "Dé": ["D᾿"]
+  },
+  "validation_character_equivalents": {
+    "᾿": "'"
+  },
   "diphthongs": {
     "αι": "ai",
     "ει": "ei",
@@ -132,7 +139,8 @@
     ".", ",", ";", ":", "·", "·", "\"", "'", "«", "»", "„", "‹", "›"
   ],
   "transcription_examples": {
-    "greek": "λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον"
+    "greek": "λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον",
+    "transcription": "leípetai hós estin taútei d' epi sémat᾿ easi polla mál᾿, hós agenéton"
   },
   "teacher_summary": {
     "alphabet": [

@@ -952,6 +952,8 @@
                     'diphthongs_with_asper',
                     'diphthongs',
                     'elisions',
+                    'validation_equivalents',
+                    'validation_character_equivalents',
                     'greek_to_latin',
                     'diaeresis_chars'
                 ];
@@ -1008,7 +1010,8 @@
                         (rule.complete_data &&
                             (!Array.isArray(rule.complete_data.mappings) && !Array.isArray(rule.complete_data.settings)))) ||
                     !loadedRules.transcription_examples ||
-                    typeof loadedRules.transcription_examples.greek !== 'string') {
+                    typeof loadedRules.transcription_examples.greek !== 'string' ||
+                    typeof loadedRules.transcription_examples.transcription !== 'string') {
                     throw new Error('Soubor pravidel nemá očekávanou strukturu.');
                 }
 
@@ -1085,7 +1088,7 @@
             if (!rules) return;
             const example = rules.transcription_examples.greek;
             document.getElementById('validator-greek').value = example;
-            document.getElementById('validator-czech').value = generateTranscription(example);
+            document.getElementById('validator-czech').value = rules.transcription_examples.transcription;
         }
 
         function clearValidator() {
@@ -1106,18 +1109,42 @@
 
         function stripValidationPunctuation(word) {
             const ignored = rules.validation_ignored_punctuation;
+            const characterEquivalents = rules.validation_character_equivalents;
+            let normalized = word.normalize(rules.unicode_normalization);
+            Object.entries(characterEquivalents).forEach(([character, equivalent]) => {
+                normalized = normalized.replaceAll(character, equivalent);
+            });
+            if (Object.values(characterEquivalents).includes(normalized)) {
+                return normalized;
+            }
+
             let start = 0;
-            let end = word.length;
-            while (start < end && ignored.includes(word[start])) start++;
-            while (end > start && ignored.includes(word[end - 1])) end--;
-            return word.slice(start, end).normalize(rules.unicode_normalization);
+            let end = normalized.length;
+            while (start < end && ignored.includes(normalized[start])) start++;
+            while (end > start &&
+                ignored.includes(normalized[end - 1]) &&
+                !Object.values(characterEquivalents).includes(normalized[end - 1])) end--;
+            return normalized.slice(start, end);
         }
 
         function tokenize(text) {
-            return text.trim().split(/\s+/).map(display => ({
-                display,
-                value: stripValidationPunctuation(display)
-            })).filter(word => word.value);
+            const words = [];
+            text.trim().split(/\s+/).forEach(display => {
+                const parts = display.split(/(?<=['᾿])(?=[\p{L}\p{M}])/u);
+                parts.forEach(part => {
+                    const value = stripValidationPunctuation(part);
+                    if (!value) return;
+
+                    if (value === "'" && words.length) {
+                        words[words.length - 1].display += part;
+                        words[words.length - 1].value += value;
+                        return;
+                    }
+
+                    words.push({ display: part, value });
+                });
+            });
+            return words;
         }
 
         function alignWords(expected, actual) {
@@ -1127,8 +1154,11 @@
                 const expectedWord = expected[index];
                 const actualWord = actual[index];
                 if (expectedWord && actualWord) {
+                    const equivalentValues = rules.validation_equivalents[expectedWord.value] || [];
                     aligned.push({
-                        type: expectedWord.value === actualWord.value ? 'correct' : 'incorrect',
+                        type: expectedWord.value === actualWord.value ||
+                            equivalentValues.some(equivalent =>
+                                stripValidationPunctuation(equivalent) === actualWord.value) ? 'correct' : 'incorrect',
                         expected: expectedWord,
                         actual: actualWord
                     });
