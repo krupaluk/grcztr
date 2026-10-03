@@ -1121,46 +1121,24 @@
         }
 
         function alignWords(expected, actual) {
-            const rows = expected.length + 1;
-            const columns = actual.length + 1;
-            const costs = Array.from({ length: rows }, () => Array(columns).fill(0));
-
-            for (let i = 0; i < rows; i++) costs[i][0] = i;
-            for (let j = 0; j < columns; j++) costs[0][j] = j;
-
-            for (let i = 1; i < rows; i++) {
-                for (let j = 1; j < columns; j++) {
-                    const substitutionCost = expected[i - 1].value === actual[j - 1].value ? 0 : 1;
-                    costs[i][j] = Math.min(
-                        costs[i - 1][j] + 1,
-                        costs[i][j - 1] + 1,
-                        costs[i - 1][j - 1] + substitutionCost
-                    );
-                }
-            }
-
             const aligned = [];
-            let i = expected.length;
-            let j = actual.length;
-            while (i > 0 || j > 0) {
-                if (i > 0 && j > 0) {
-                    const substitutionCost = expected[i - 1].value === actual[j - 1].value ? 0 : 1;
-                    if (costs[i][j] === costs[i - 1][j - 1] + substitutionCost) {
-                        aligned.push({
-                            type: substitutionCost ? 'incorrect' : 'correct',
-                            expected: expected[--i],
-                            actual: actual[--j]
-                        });
-                        continue;
-                    }
-                }
-                if (j > 0 && costs[i][j] === costs[i][j - 1] + 1) {
-                    aligned.push({ type: 'extra', actual: actual[--j] });
+            const wordCount = Math.max(expected.length, actual.length);
+            for (let index = 0; index < wordCount; index++) {
+                const expectedWord = expected[index];
+                const actualWord = actual[index];
+                if (expectedWord && actualWord) {
+                    aligned.push({
+                        type: expectedWord.value === actualWord.value ? 'correct' : 'incorrect',
+                        expected: expectedWord,
+                        actual: actualWord
+                    });
+                } else if (expectedWord) {
+                    aligned.push({ type: 'missing', expected: expectedWord });
                 } else {
-                    aligned.push({ type: 'missing', expected: expected[--i] });
+                    aligned.push({ type: 'extra', actual: actualWord });
                 }
             }
-            return aligned.reverse();
+            return aligned;
         }
 
         function appendDiffToken(container, className, text) {
