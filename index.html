@@ -42,6 +42,21 @@
             margin-bottom: 20px;
         }
 
+        .input-group-with-test {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .input-group-with-test label {
+            margin: 0;
+        }
+
+        .input-group-with-test + .input-group {
+            margin-top: 0;
+        }
+
         label {
             display: block;
             color: #555;
@@ -189,6 +204,25 @@
 
         .close-btn:hover {
             background: #5568d3;
+        }
+
+        .test-button {
+            padding: 8px 12px;
+            background: #888;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .test-button:hover {
+            background: #777;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
         }
 
         .tabs {
@@ -360,8 +394,14 @@
         </div>
 
         <div id="transcriber" class="tab-content active">
-            <div class="input-group">
+            <div class="input-group-with-test">
                 <label for="greek-text">Řecký text:</label>
+                <div class="button-group">
+                    <button class="test-button" onclick="clearTranscriber()">Vymazat</button>
+                    <button class="test-button" onclick="loadTestExampleTranscriber()">Testovací příklad</button>
+                </div>
+            </div>
+            <div class="input-group">
                 <textarea id="greek-text" placeholder="Zadejte řecký text..."></textarea>
             </div>
 
@@ -374,8 +414,14 @@
         </div>
 
         <div id="validator" class="tab-content">
-            <div class="input-group">
+            <div class="input-group-with-test">
                 <label for="validator-greek">Řecký text:</label>
+                <div class="button-group">
+                    <button class="test-button" onclick="clearValidator()">Vymazat</button>
+                    <button class="test-button" onclick="loadTestExample()">Testovací příklad</button>
+                </div>
+            </div>
+            <div class="input-group">
                 <textarea id="validator-greek" placeholder="Zadejte řecký text..."></textarea>
             </div>
 
@@ -501,41 +547,21 @@
         const punctuation = {
             ";": ";",
             "·": ":",
+            "·": "",
             ",": ",",
             ".": "."
         };
 
         const diphthongsWithAsper = {
-            "αἱ": "haj", "αἵ": "haj", "αἷ": "haj",
-            "εἱ": "hej", "εἵ": "hej", "εἷ": "hej",
-            "οἱ": "hoj", "οἵ": "hoj", "οἷ": "hoj",
-            "υἱ": "hyj", "υἵ": "hyj", "υἷ": "hyj",
             "αὑ": "hau", "αὕ": "hau", "αὗ": "hau",
-            "εὑ": "heu", "εὕ": "heu", "εὗ": "heu",
-            "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
-            "οὑ": "hou", "οὕ": "hou", "οὗ": "hou",
-            "ωὑ": "hou", "ωὕ": "hou", "ωὗ": "hou",
-            "Αἱ": "Haj", "Αἵ": "Haj", "Αἷ": "Haj",
-            "Εἱ": "Hej", "Εἵ": "Hej", "Εἷ": "Hej",
-            "Οἱ": "Hoj", "Οἵ": "Hoj", "Οἷ": "Hoj",
-            "Υἱ": "Hyj", "Υἵ": "Hyj", "Υἷ": "Hyj",
             "Αὑ": "Hau", "Αὕ": "Hau", "Αὗ": "Hau",
-            "Εὑ": "Heu", "Εὕ": "Heu", "Εὗ": "Heu",
-            "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu",
-            "Οὑ": "Hou", "Οὕ": "Hou", "Οὗ": "Hou",
-            "Ωὑ": "Hou", "Ωὕ": "Hou", "Ωὗ": "Hou"
+            "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
+            "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu"
         };
 
         const diphthongs = {
-            "αι": "aj", "άι": "aj", "αὶ": "aj", "ΑΊ": "Aj", "Αὶ": "Aj",
-            "ει": "ej", "εί": "ej", "εὶ": "ej", "ΕΊ": "Ej", "Εὶ": "Ej",
-            "οι": "oj", "οί": "oj", "οὶ": "oj", "ΟΊ": "Oj", "Οὶ": "Oj",
-            "υι": "yj", "ύι": "yj", "υὶ": "yj", "ΥΊ": "Yj", "Υὶ": "Yj",
-            "αυ": "au", "αύ": "au", "ΑΎ": "Au",
-            "ευ": "eu", "εύ": "eu", "ΕΎ": "Eu",
-            "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu",
-            "ου": "u", "ού": "u", "ΟΎ": "U",
-            "ωυ": "ou", "ωύ": "ou", "ΩΎ": "Ou"
+            "αυ": "au", "αύ": "au", "αὺ": "au", "αῦ": "au", "ΑΎ": "Au", "Αὺ": "Au", "Αῦ": "Au",
+            "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu"
         };
 
         const greekToLatin = {
@@ -543,26 +569,26 @@
             "Β": "B", "β": "b",
             "Γ": "G", "γ": "g",
             "Δ": "D", "δ": "d",
-            "Ε": "E", "ε": "e", "έ": "é", "ὲ": "e",
+            "Ε": "E", "ε": "e", "έ": "é", "ὲ": "e", "έ": "é",
             "Ζ": "Z", "ζ": "z",
-            "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é",
+            "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é", "ή": "é",
             "Θ": "Th", "θ": "th",
-            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ῖ": "i", "ϊ": "i", "ΐ": "í",
+            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ί": "í", "ῖ": "i", "ϊ": "i", "ΐ": "í",
             "Κ": "K", "κ": "k",
             "Λ": "L", "λ": "l",
             "Μ": "M", "μ": "m",
             "Ν": "N", "ν": "n",
             "Ξ": "X", "ξ": "x",
-            "Ο": "O", "ο": "o", "ό": "ó", "ὸ": "o",
+            "Ο": "O", "ο": "o", "ό": "ó", "ὸ": "o", "ό": "ó",
             "Π": "P", "π": "p",
             "Ρ": "R", "ρ": "r",
             "Σ": "S", "σ": "s", "ς": "s",
             "Τ": "T", "τ": "t",
-            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "ϋ": "y", "ΰ": "ý",
+            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "ϋ": "y", "ΰ": "ý", "ύ": "ý",
             "Φ": "F", "φ": "f",
             "Χ": "Ch", "χ": "ch",
             "Ψ": "Ps", "ψ": "ps",
-            "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó"
+            "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó", "ώ": "ó"
         };
 
         const diaeresisChars = {
@@ -611,6 +637,26 @@
             event.target.classList.add('active');
         }
 
+        function loadTestExample() {
+            document.getElementById('validator-greek').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
+            document.getElementById('validator-czech').value = 'leípetai hós estin taútei d᾿ epí sémat᾿easi polla mál᾿, hós agénétov';
+        }
+
+        function clearValidator() {
+            document.getElementById('validator-greek').value = '';
+            document.getElementById('validator-czech').value = '';
+            document.getElementById('validation-output').classList.remove('active');
+        }
+
+        function loadTestExampleTranscriber() {
+            document.getElementById('greek-text').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
+        }
+
+        function clearTranscriber() {
+            document.getElementById('greek-text').value = '';
+            document.getElementById('output').textContent = '';
+        }
+
         function validate() {
             const greekText = document.getElementById('validator-greek').value;
             const userTranscription = document.getElementById('validator-czech').value;
@@ -625,9 +671,13 @@
             // Generate correct transcription
             const correctTranscription = generateTranscription(greekText);
             
-            // Compare word by word
-            const userWords = userTranscription.trim().split(/\s+/);
-            const correctWords = correctTranscription.trim().split(/\s+/);
+            // Split into words with punctuation preserved
+            const userWordsWithPunct = userTranscription.trim().split(/(\s+)/);
+            const correctWordsWithPunct = correctTranscription.trim().split(/(\s+)/);
+            
+            // Get actual words (without punctuation) for comparison
+            const userWords = userTranscription.trim().split(/\s+/).map(w => w.replace(/^[.,;:··"'«»„"‹›'']*/, '').replace(/[.,;:··"'«»„"‹›'']*$/, ''));
+            const correctWords = correctTranscription.trim().split(/\s+/).map(w => w.replace(/^[.,;:··"'«»„"‹›'']*/, '').replace(/[.,;:··"'«»„"‹›'']*$/, ''));
             
             let html = '';
             let correctCount = 0;
@@ -638,18 +688,19 @@
             for (let i = 0; i < maxLen; i++) {
                 const userWord = userWords[i] || '';
                 const correctWord = correctWords[i] || '';
+                const userWordWithPunct = userWordsWithPunct[i * 2] || '';
                 
                 if (userWord === correctWord) {
-                    html += `<span class="word-diff correct">${userWord}</span> `;
+                    html += `<span class="word-diff correct">${userWordWithPunct}</span> `;
                     correctCount++;
                 } else if (!userWord) {
                     html += `<span class="word-diff missing">(chybí: ${correctWord})</span> `;
                     incorrectCount++;
                 } else if (!correctWord) {
-                    html += `<span class="word-diff incorrect">${userWord} (nadbytečné)</span> `;
+                    html += `<span class="word-diff incorrect">${userWordWithPunct} (nadbytečné)</span> `;
                     incorrectCount++;
                 } else {
-                    html += `<span class="word-diff incorrect">${userWord} <span class="correct-hint">(správně: ${correctWord})</span></span> `;
+                    html += `<span class="word-diff incorrect">${userWordWithPunct} <span class="correct-hint">(správně: ${correctWord})</span></span> `;
                     incorrectCount++;
                 }
             }
