@@ -468,8 +468,8 @@
         const combinedCharacters = {
             "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "a", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "a",
             "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "A", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "A", "Ἇ": "A",
-            "ἐ": "e", "ἑ": "hé", "ἒ": "e", "ἓ": "e", "ἔ": "é", "ἕ": "hé",
-            "Ἐ": "E", "Ἑ": "Hé", "Ἒ": "E", "Ἓ": "E", "Ἔ": "É", "Ἕ": "Hé",
+            "ἐ": "e", "ἑ": "he", "ἒ": "e", "ἓ": "e", "ἔ": "é", "ἕ": "hé",
+            "Ἐ": "E", "Ἑ": "He", "Ἒ": "E", "Ἓ": "E", "Ἔ": "É", "Ἕ": "Hé",
             "ἠ": "é", "ἡ": "hé", "ἢ": "é", "ἣ": "é", "ἤ": "é", "ἥ": "hé", "ἦ": "é", "ἧ": "é",
             "Ἠ": "É", "Ἡ": "Hé", "Ἢ": "É", "Ἣ": "É", "Ἤ": "É", "Ἥ": "Hé", "Ἦ": "É", "Ἧ": "É",
             "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "i", "ἴ": "í", "ἵ": "hí", "ἶ": "i", "ἷ": "i",
@@ -696,7 +696,7 @@
                     continue;
                 }
                 
-                // Check for combined characters (with diacritics)
+                // Check for combined characters (with diacritics) - these are final, no further processing
                 if (combinedCharacters[greekText[i]]) {
                     result += combinedCharacters[greekText[i]];
                     i++;
