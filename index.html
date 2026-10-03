@@ -124,8 +124,10 @@
             right: 20px;
             width: 32px;
             height: 32px;
+            padding: 0;
             background: #667eea;
             color: white;
+            border: none;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -139,6 +141,10 @@
 
         .info-icon:hover {
             background: #5568d3;
+        }
+
+        .teacher-icon {
+            right: 62px;
         }
 
         .modal {
@@ -162,8 +168,7 @@
             background: white;
             border-radius: 16px;
             padding: 30px;
-            max-width: 500px;
-            width: 90%;
+            width: 80vw;
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -172,6 +177,25 @@
             color: #333;
             margin-bottom: 20px;
             font-size: 24px;
+        }
+
+        .rule-details-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .rule-details-header h2 {
+            margin-bottom: 20px;
+        }
+
+        .close-top-btn {
+            width: auto;
+            flex-shrink: 0;
+            padding: 8px 14px;
+            background: #667eea;
+            font-size: 14px;
         }
 
         .modal-content p {
@@ -189,6 +213,106 @@
 
         .modal-content li {
             margin-bottom: 8px;
+        }
+
+        .complete-list-button {
+            width: auto;
+            margin-top: 8px;
+            padding: 7px 10px;
+            background: #667eea;
+            font-size: 13px;
+        }
+
+        .complete-list-button:hover {
+            background: #5568d3;
+        }
+
+        .rule-details {
+            padding: 14px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+        }
+
+        .rule-details h4 {
+            margin: 4px 0 8px;
+            color: #333;
+        }
+
+        .rule-details table {
+            width: 100%;
+            margin-bottom: 14px;
+            border-collapse: collapse;
+        }
+
+        .rule-details th,
+        .rule-details td {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .rule-details th {
+            background: #eef0fb;
+        }
+
+        .teacher-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .teacher-summary-table th,
+        .teacher-summary-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .teacher-summary-table th {
+            background: #eef0fb;
+        }
+
+        .teacher-alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+            margin-top: 14px;
+        }
+
+        .teacher-alphabet-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .teacher-alphabet-table th,
+        .teacher-alphabet-table td {
+            padding: 7px 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .teacher-alphabet-table th {
+            background: #eef0fb;
+        }
+
+        .teacher-alphabet-container {
+            margin-top: 14px;
+        }
+
+        .teacher-alphabet-table td {
+            white-space: nowrap;
+        }
+
+        @media (max-width: 700px) {
+            .teacher-alphabet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .teacher-summary-toggle {
+            width: auto;
+            padding: 8px 14px;
+            font-size: 14px;
         }
 
         .close-btn {
@@ -275,6 +399,15 @@
         }
 
         .validation-result.error {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .app-status {
+            margin-bottom: 20px;
+            padding: 12px 15px;
+            border-radius: 8px;
             background: #f8d7da;
             border: 2px solid #f5c6cb;
             color: #721c24;
@@ -383,14 +516,16 @@
     </style>
 </head>
 <body>
-    <div class="info-icon" onclick="openModal()">i</div>
+    <button class="info-icon" type="button" onclick="openModal()" aria-label="O aplikaci">i</button>
+    <button class="info-icon teacher-icon" type="button" onclick="openTeacherModal()" aria-label="Otevřít souhrn od vyučujícího" title="Souhrn od vyučujícího">V</button>
     
     <div class="container">
         <h1>Řečtina → Čeština</h1>
+        <div id="app-status" class="app-status" role="status" aria-live="polite" hidden></div>
         
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('transcriber')">Transkriptor</button>
-            <button class="tab" onclick="switchTab('validator')">Validátor</button>
+            <button class="tab active" onclick="switchTab('transcriber', this)">Transkriptor</button>
+            <button class="tab" onclick="switchTab('validator', this)">Validátor</button>
         </div>
 
         <div id="transcriber" class="tab-content active">
@@ -459,149 +594,245 @@
                         <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Příklad</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">1</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Normalizace</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Odstranění jemných přídechů a dalších diakritik (circumflex, trema)</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">ἀ→α, ἡ→η</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">2</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Ostrý přízvuk (spiritus asper)</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Přidání "h" na začátek slova</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">ὑδωρ→hydor</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">3</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Interpunkce</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Převod řecké interpunkce na českou</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">;→;, ·→:</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">4</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Dvojhlásky</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Převod jako celek, čárka se ignoruje</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">αι→aj, ει→ej, αί→aj</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">5</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Jednotlivá písmena</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Převod na české ekvivalenty, čárka = dlouhá samohláska</td>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Α→A, έ→é, Θ→Th</td>
-                    </tr>
-                </tbody>
+                <tbody id="rules-table-body"></tbody>
             </table>
             
             <button class="close-btn" onclick="closeModal()">Zavřít</button>
         </div>
     </div>
 
+    <div class="modal" id="teacherSummaryModal" role="dialog" aria-modal="true" aria-labelledby="teacher-summary-title">
+        <div class="modal-content">
+            <h2 id="teacher-summary-title">Souhrn pravidel od vyučujícího</h2>
+            <table class="teacher-summary-table">
+                <thead>
+                    <tr>
+                        <th>Název</th>
+                        <th>Podrobnosti</th>
+                    </tr>
+                </thead>
+                <tbody id="teacher-summary-table-body"></tbody>
+            </table>
+            <button class="close-btn" onclick="closeTeacherModal()">Zavřít</button>
+        </div>
+    </div>
+
+    <div class="modal" id="ruleDetailsModal" role="dialog" aria-modal="true" aria-labelledby="rule-details-title">
+        <div class="modal-content">
+            <div class="rule-details-header">
+                <h2 id="rule-details-title"></h2>
+                <button class="close-top-btn" onclick="closeRuleDetails()">Zavřít</button>
+            </div>
+            <div id="rule-details-content" class="rule-details"></div>
+            <button class="close-btn" onclick="closeRuleDetails()">Zavřít</button>
+        </div>
+    </div>
+
     <script>
-        const spiritusAsper = {
-            "ἁ": "h", "Ἁ": "H",
-            "ἑ": "h", "Ἑ": "H",
-            "ἡ": "h", "Ἡ": "H",
-            "ἱ": "h", "Ἱ": "H",
-            "ὁ": "h", "Ὁ": "H",
-            "ὑ": "h", "Ὑ": "H",
-            "ὡ": "h", "Ὡ": "H",
-            "ᾁ": "h", "ᾉ": "H",
-            "ᾑ": "h", "ᾘ": "H",
-            "ᾡ": "h", "ᾩ": "H"
-        };
+        let rules;
 
-        const combinedCharacters = {
-            "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "a", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "a",
-            "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "A", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "A", "Ἇ": "A",
-            "ἐ": "e", "ἑ": "he", "ἒ": "e", "ἓ": "e", "ἔ": "é", "ἕ": "hé",
-            "Ἐ": "E", "Ἑ": "He", "Ἒ": "E", "Ἓ": "E", "Ἔ": "É", "Ἕ": "Hé",
-            "ἠ": "é", "ἡ": "hé", "ἢ": "é", "ἣ": "é", "ἤ": "é", "ἥ": "hé", "ἦ": "é", "ἧ": "é",
-            "Ἠ": "É", "Ἡ": "Hé", "Ἢ": "É", "Ἣ": "É", "Ἤ": "É", "Ἥ": "Hé", "Ἦ": "É", "Ἧ": "É",
-            "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "i", "ἴ": "í", "ἵ": "hí", "ἶ": "i", "ἷ": "i",
-            "Ἰ": "I", "Ἱ": "Hí", "Ἲ": "I", "Ἳ": "I", "Ἴ": "Í", "Ἵ": "Hí", "Ἶ": "I", "Ἷ": "I",
-            "ὀ": "o", "ὁ": "hó", "ὂ": "o", "ὃ": "o", "ὄ": "ó", "ὅ": "hó",
-            "Ὀ": "O", "Ὁ": "Hó", "Ὂ": "O", "Ὃ": "O", "Ὄ": "Ó", "Ὅ": "Hó",
-            "ὐ": "y", "ὑ": "hý", "ὒ": "y", "ὓ": "y", "ὔ": "ý", "ὕ": "hý", "ὖ": "y", "ὗ": "y",
-            "Ὑ": "Hý", "Ὓ": "Y", "Ὕ": "Hý", "Ὗ": "Y",
-            "ὠ": "ó", "ὡ": "hó", "ὢ": "ó", "ὣ": "ó", "ὤ": "ó", "ὥ": "hó", "ὦ": "ó", "ὧ": "ó",
-            "Ὠ": "Ó", "Ὡ": "Hó", "Ὢ": "Ó", "Ὣ": "Ó", "Ὤ": "Ó", "Ὥ": "Hó", "Ὦ": "Ó", "Ὧ": "Ó",
-            "ᾀ": "a", "ᾁ": "há", "ᾂ": "a", "ᾃ": "a", "ᾄ": "á", "ᾅ": "há", "ᾆ": "a", "ᾇ": "a",
-            "ᾈ": "A", "ᾉ": "Há", "ᾊ": "A", "ᾋ": "A", "ᾌ": "Á", "ᾍ": "Há", "ᾎ": "A", "ᾏ": "A",
-            "ᾐ": "é", "ᾑ": "hé", "ᾒ": "é", "ᾓ": "é", "ᾔ": "é", "ᾕ": "hé", "ᾖ": "é", "ᾗ": "é",
-            "ᾘ": "É", "ᾙ": "Hé", "ᾚ": "É", "ᾛ": "É", "ᾜ": "É", "ᾝ": "Hé", "ᾞ": "É", "ᾟ": "É",
-            "ᾠ": "ó", "ᾡ": "hó", "ᾢ": "ó", "ᾣ": "ó", "ᾤ": "ó", "ᾥ": "hó", "ᾦ": "ó", "ᾧ": "ó",
-            "ᾨ": "Ó", "ᾩ": "Hó", "ᾪ": "Ó", "ᾫ": "Ó", "ᾬ": "Ó", "ᾭ": "Hó", "ᾮ": "Ó", "ᾯ": "Ó",
-            "ᾲ": "a", "ᾳ": "a", "ᾴ": "á", "ᾶ": "a", "ᾷ": "a",
-            "ᾼ": "A",
-            "ῂ": "é", "ῃ": "é", "ῄ": "é", "ῆ": "é", "ῇ": "é",
-            "ῌ": "É",
-            "ῒ": "i", "ῖ": "i", "ῗ": "i",
-            "Ῐ": "I", "Ῑ": "I", "Ὶ": "Í", "Ί": "I",
-            "ῲ": "ó", "ῳ": "ó", "ῴ": "ó", "ῶ": "ó", "ῷ": "ó",
-            "ῼ": "Ó",
-            "ῠ": "y", "ῡ": "y", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y", "ῧ": "y",
-            "Ῠ": "Y", "Ῡ": "Y", "Ὺ": "Y", "Ύ": "Y", "Ῥ": "R"
-        };
+        function hasRule(mapping, key) {
+            return Object.prototype.hasOwnProperty.call(mapping, key);
+        }
 
-        const punctuation = {
-            ";": ";",
-            "·": ":",
-            "·": "",
-            ",": ",",
-            ".": "."
-        };
+        function setStatus(message) {
+            const status = document.getElementById('app-status');
+            status.textContent = message;
+            status.hidden = !message;
+        }
 
-        const diphthongsWithAsper = {
-            "αὑ": "hau", "αὕ": "hau", "αὗ": "hau",
-            "Αὑ": "Hau", "Αὕ": "Hau", "Αὗ": "Hau",
-            "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
-            "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu"
-        };
+        function renderRules(ruleData) {
+            const tableBody = document.getElementById('rules-table-body');
+            tableBody.replaceChildren();
 
-        const diphthongs = {
-            "αυ": "au", "αύ": "au", "αὺ": "au", "αῦ": "au", "ΑΎ": "Au", "Αὺ": "Au", "Αῦ": "Au",
-            "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu"
-        };
+            ruleData.rule_descriptions.forEach((rule, index) => {
+                const row = document.createElement('tr');
+                [String(index + 1), rule.name, rule.description].forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.style.padding = '10px';
+                    cell.style.border = '1px solid #ddd';
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
 
-        const greekToLatin = {
-            "Α": "A", "α": "a", "ά": "á", "ὰ": "a", "ᾶ": "a",
-            "Β": "B", "β": "b",
-            "Γ": "G", "γ": "g",
-            "Δ": "D", "δ": "d",
-            "Ε": "E", "ε": "e", "έ": "é", "ὲ": "e", "έ": "é",
-            "Ζ": "Z", "ζ": "z",
-            "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é", "ή": "é",
-            "Θ": "Th", "θ": "th",
-            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ί": "í", "ῖ": "i", "ϊ": "i", "ΐ": "í",
-            "Κ": "K", "κ": "k",
-            "Λ": "L", "λ": "l",
-            "Μ": "M", "μ": "m",
-            "Ν": "N", "ν": "n",
-            "Ξ": "X", "ξ": "x",
-            "Ο": "O", "ο": "o", "ό": "ó", "ὸ": "o", "ό": "ó",
-            "Π": "P", "π": "p",
-            "Ρ": "R", "ρ": "r",
-            "Σ": "S", "σ": "s", "ς": "s",
-            "Τ": "T", "τ": "t",
-            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "ϋ": "y", "ΰ": "ý", "ύ": "ý",
-            "Φ": "F", "φ": "f",
-            "Χ": "Ch", "χ": "ch",
-            "Ψ": "Ps", "ψ": "ps",
-            "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó", "ώ": "ó"
-        };
+                const exampleCell = document.createElement('td');
+                exampleCell.style.padding = '10px';
+                exampleCell.style.border = '1px solid #ddd';
+                const example = document.createElement('div');
+                example.textContent = rule.example;
+                exampleCell.appendChild(example);
 
-        const diaeresisChars = {
-            "ϊ": "i", "ΐ": "í",
-            "ϋ": "y", "ΰ": "ý"
-        };
+                if (rule.complete_data) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'complete-list-button';
+                    button.textContent = 'Kompletní seznam';
+                    button.addEventListener('click', () => {
+                        openRuleDetails(rule, ruleData);
+                    });
+                    exampleCell.appendChild(button);
+                }
+                row.appendChild(exampleCell);
 
-        const vowels = new Set(['a', 'á', 'e', 'é', 'i', 'í', 'o', 'ó', 'u', 'y', 'ý', 'A', 'Á', 'E', 'É', 'I', 'Í', 'O', 'Ó', 'U', 'Y', 'Ý']);
+                tableBody.appendChild(row);
+            });
+        }
+
+        function renderTeacherSummary(ruleData) {
+            const tableBody = document.getElementById('teacher-summary-table-body');
+            tableBody.replaceChildren();
+            const row = document.createElement('tr');
+            const name = document.createElement('td');
+            name.textContent = 'Řecká AlfaBeta';
+            row.appendChild(name);
+
+            const content = document.createElement('td');
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'teacher-summary-toggle';
+            toggle.textContent = 'Zobrazit';
+            toggle.setAttribute('aria-expanded', 'false');
+
+            const alphabetContainer = document.createElement('div');
+            alphabetContainer.className = 'teacher-alphabet-container';
+            alphabetContainer.hidden = true;
+            const alphabetGrid = document.createElement('div');
+            alphabetGrid.className = 'teacher-alphabet-grid';
+            const alphabet = ruleData.teacher_summary.alphabet;
+            const splitIndex = Math.ceil(alphabet.length / 2);
+            [alphabet.slice(0, splitIndex), alphabet.slice(splitIndex)].forEach(letters => {
+                const alphabetTable = document.createElement('table');
+                alphabetTable.className = 'teacher-alphabet-table';
+                const head = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                ['Řecky', 'Přepis', 'Název'].forEach(label => {
+                    const cell = document.createElement('th');
+                    cell.textContent = label;
+                    headerRow.appendChild(cell);
+                });
+                head.appendChild(headerRow);
+                alphabetTable.appendChild(head);
+
+                const body = document.createElement('tbody');
+                letters.forEach(letter => {
+                    const letterRow = document.createElement('tr');
+                    [
+                        [letter.uppercase, letter.lowercase, letter.final].filter(Boolean).join(' / '),
+                        letter.latin,
+                        letter.name
+                    ].forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        letterRow.appendChild(cell);
+                    });
+                    body.appendChild(letterRow);
+                });
+                alphabetTable.appendChild(body);
+                alphabetGrid.appendChild(alphabetTable);
+            });
+            alphabetContainer.appendChild(alphabetGrid);
+
+            toggle.addEventListener('click', () => {
+                alphabetContainer.hidden = !alphabetContainer.hidden;
+                toggle.textContent = alphabetContainer.hidden ? 'Zobrazit' : 'Skrýt';
+                toggle.setAttribute('aria-expanded', String(!alphabetContainer.hidden));
+            });
+            content.appendChild(toggle);
+            content.appendChild(alphabetContainer);
+            row.appendChild(content);
+            tableBody.appendChild(row);
+        }
+
+        function openRuleDetails(rule, ruleData) {
+            document.getElementById('rule-details-title').textContent = rule.name;
+            const details = document.getElementById('rule-details-content');
+            details.replaceChildren();
+            renderCompleteRuleData(details, rule, ruleData);
+            document.getElementById('ruleDetailsModal').classList.add('active');
+        }
+
+        function closeRuleDetails() {
+            document.getElementById('ruleDetailsModal').classList.remove('active');
+        }
+
+        function renderCompleteRuleData(container, rule, ruleData) {
+            const sections = [
+                ...(rule.complete_data.mappings || []).map(item => ({
+                    ...item,
+                    values: ruleData[item.key]
+                })),
+                ...(rule.complete_data.settings || []).map(item => ({
+                    ...item,
+                    values: { [item.key]: ruleData[item.key] }
+                }))
+            ];
+
+            sections.forEach(section => {
+                const heading = document.createElement('h4');
+                heading.textContent = section.label;
+                container.appendChild(heading);
+
+                const table = document.createElement('table');
+                const body = document.createElement('tbody');
+                Object.entries(section.values).forEach(([source, target]) => {
+                    const row = document.createElement('tr');
+                    [source, Array.isArray(target) ? target.join(', ') : target].forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = String(value);
+                        row.appendChild(cell);
+                    });
+                    body.appendChild(row);
+                });
+                table.appendChild(body);
+                container.appendChild(table);
+            });
+        }
+
+        async function loadRules() {
+            try {
+                const response = await fetch('rules.json');
+                if (!response.ok) {
+                    throw new Error(`Načtení pravidel selhalo: HTTP ${response.status}`);
+                }
+
+                const loadedRules = await response.json();
+                const requiredMappings = [
+                    'punctuation',
+                    'combined_characters',
+                    'diphthongs_with_asper',
+                    'diphthongs',
+                    'greek_to_latin',
+                    'diaeresis_chars'
+                ];
+                if (requiredMappings.some(name => !loadedRules[name]) ||
+                    !Array.isArray(loadedRules.vowels) ||
+                    !Array.isArray(loadedRules.validation_ignored_punctuation) ||
+                    !loadedRules.teacher_summary ||
+                    !Array.isArray(loadedRules.teacher_summary.alphabet) ||
+                    !Array.isArray(loadedRules.rule_descriptions) ||
+                    loadedRules.rule_descriptions.some(rule =>
+                        typeof rule.example !== 'string' ||
+                        (rule.complete_data &&
+                            (!Array.isArray(rule.complete_data.mappings) && !Array.isArray(rule.complete_data.settings)))) ||
+                    !loadedRules.transcription_examples ||
+                    typeof loadedRules.transcription_examples.greek !== 'string') {
+                    throw new Error('Soubor pravidel nemá očekávanou strukturu.');
+                }
+
+                renderRules(loadedRules);
+                renderTeacherSummary(loadedRules);
+                rules = loadedRules;
+                setStatus('');
+            } catch (error) {
+                console.error('Pravidla transkripce se nepodařilo načíst.', error);
+                setStatus('Pravidla transkripce se nepodařilo načíst. Otevřete aplikaci přes webový server a zkuste to znovu.');
+            }
+        }
 
         function transcribe() {
+            if (!rules) return;
             const greekText = document.getElementById('greek-text').value;
-            const output = document.getElementById('output');
-            output.textContent = generateTranscription(greekText);
+            document.getElementById('output').textContent = generateTranscription(greekText);
         }
 
         function openModal() {
@@ -612,34 +843,56 @@
             document.getElementById('infoModal').classList.remove('active');
         }
 
-        // Close modal when clicking outside
+        function openTeacherModal() {
+            document.getElementById('teacherSummaryModal').classList.add('active');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacherSummaryModal').classList.remove('active');
+        }
+
         document.getElementById('infoModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeModal();
             }
         });
 
-        function switchTab(tabName) {
-            // Hide all tab contents
+        document.getElementById('ruleDetailsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRuleDetails();
+            }
+        });
+
+        document.getElementById('teacherSummaryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTeacherModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeRuleDetails();
+                closeTeacherModal();
+                closeModal();
+            }
+        });
+
+        function switchTab(tabName, tabButton) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
-            // Remove active class from all tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Show selected tab content
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
-            event.target.classList.add('active');
+            tabButton.classList.add('active');
         }
 
         function loadTestExample() {
-            document.getElementById('validator-greek').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
-            document.getElementById('validator-czech').value = 'leípetai hós estin taútei d᾿ epí sémat᾿easi polla mál᾿, hós agénétov';
+            if (!rules) return;
+            const example = rules.transcription_examples.greek;
+            document.getElementById('validator-greek').value = example;
+            document.getElementById('validator-czech').value = generateTranscription(example);
         }
 
         function clearValidator() {
@@ -649,7 +902,8 @@
         }
 
         function loadTestExampleTranscriber() {
-            document.getElementById('greek-text').value = 'λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον';
+            if (!rules) return;
+            document.getElementById('greek-text').value = rules.transcription_examples.greek;
         }
 
         function clearTranscriber() {
@@ -657,121 +911,190 @@
             document.getElementById('output').textContent = '';
         }
 
+        function stripValidationPunctuation(word) {
+            const ignored = rules.validation_ignored_punctuation;
+            let start = 0;
+            let end = word.length;
+            while (start < end && ignored.includes(word[start])) start++;
+            while (end > start && ignored.includes(word[end - 1])) end--;
+            return word.slice(start, end).normalize(rules.unicode_normalization);
+        }
+
+        function tokenize(text) {
+            return text.trim().split(/\s+/).map(display => ({
+                display,
+                value: stripValidationPunctuation(display)
+            })).filter(word => word.value);
+        }
+
+        function alignWords(expected, actual) {
+            const rows = expected.length + 1;
+            const columns = actual.length + 1;
+            const costs = Array.from({ length: rows }, () => Array(columns).fill(0));
+
+            for (let i = 0; i < rows; i++) costs[i][0] = i;
+            for (let j = 0; j < columns; j++) costs[0][j] = j;
+
+            for (let i = 1; i < rows; i++) {
+                for (let j = 1; j < columns; j++) {
+                    const substitutionCost = expected[i - 1].value === actual[j - 1].value ? 0 : 1;
+                    costs[i][j] = Math.min(
+                        costs[i - 1][j] + 1,
+                        costs[i][j - 1] + 1,
+                        costs[i - 1][j - 1] + substitutionCost
+                    );
+                }
+            }
+
+            const aligned = [];
+            let i = expected.length;
+            let j = actual.length;
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0) {
+                    const substitutionCost = expected[i - 1].value === actual[j - 1].value ? 0 : 1;
+                    if (costs[i][j] === costs[i - 1][j - 1] + substitutionCost) {
+                        aligned.push({
+                            type: substitutionCost ? 'incorrect' : 'correct',
+                            expected: expected[--i],
+                            actual: actual[--j]
+                        });
+                        continue;
+                    }
+                }
+                if (j > 0 && costs[i][j] === costs[i][j - 1] + 1) {
+                    aligned.push({ type: 'extra', actual: actual[--j] });
+                } else {
+                    aligned.push({ type: 'missing', expected: expected[--i] });
+                }
+            }
+            return aligned.reverse();
+        }
+
+        function appendDiffToken(container, className, text) {
+            const span = document.createElement('span');
+            span.className = `word-diff ${className}`;
+            span.textContent = text;
+            container.appendChild(span);
+            container.appendChild(document.createTextNode(' '));
+            return span;
+        }
+
+        function normalizeGreekText(text) {
+            let normalized = '';
+            let segment = '';
+            for (const character of text) {
+                if (hasRule(rules.punctuation, character)) {
+                    normalized += segment.normalize(rules.unicode_normalization) + character;
+                    segment = '';
+                } else {
+                    segment += character;
+                }
+            }
+            return normalized + segment.normalize(rules.unicode_normalization);
+        }
+
         function validate() {
+            if (!rules) return;
             const greekText = document.getElementById('validator-greek').value;
             const userTranscription = document.getElementById('validator-czech').value;
-            const outputDiv = document.getElementById('validation-output');
-            const textDiv = document.getElementById('validation-text');
-            
             if (!greekText.trim() || !userTranscription.trim()) {
                 alert('Prosím vyplňte obě pole.');
                 return;
             }
-            
-            // Generate correct transcription
-            const correctTranscription = generateTranscription(greekText);
-            
-            // Split into words with punctuation preserved
-            const userWordsWithPunct = userTranscription.trim().split(/(\s+)/);
-            const correctWordsWithPunct = correctTranscription.trim().split(/(\s+)/);
-            
-            // Get actual words (without punctuation) for comparison
-            const userWords = userTranscription.trim().split(/\s+/).map(w => w.replace(/^[.,;:··"'«»„"‹›'']*/, '').replace(/[.,;:··"'«»„"‹›'']*$/, ''));
-            const correctWords = correctTranscription.trim().split(/\s+/).map(w => w.replace(/^[.,;:··"'«»„"‹›'']*/, '').replace(/[.,;:··"'«»„"‹›'']*$/, ''));
-            
-            let html = '';
+
+            const expected = tokenize(generateTranscription(greekText));
+            const actual = tokenize(userTranscription);
+            const aligned = alignWords(expected, actual);
+            const textDiv = document.getElementById('validation-text');
+            textDiv.replaceChildren();
+
             let correctCount = 0;
             let incorrectCount = 0;
-            
-            const maxLen = Math.max(userWords.length, correctWords.length);
-            
-            for (let i = 0; i < maxLen; i++) {
-                const userWord = userWords[i] || '';
-                const correctWord = correctWords[i] || '';
-                const userWordWithPunct = userWordsWithPunct[i * 2] || '';
-                
-                if (userWord === correctWord) {
-                    html += `<span class="word-diff correct">${userWordWithPunct}</span> `;
+            aligned.forEach(item => {
+                if (item.type === 'correct') {
+                    appendDiffToken(textDiv, 'correct', item.actual.display);
                     correctCount++;
-                } else if (!userWord) {
-                    html += `<span class="word-diff missing">(chybí: ${correctWord})</span> `;
+                } else if (item.type === 'missing') {
+                    appendDiffToken(textDiv, 'missing', `(chybí: ${item.expected.display})`);
                     incorrectCount++;
-                } else if (!correctWord) {
-                    html += `<span class="word-diff incorrect">${userWordWithPunct} (nadbytečné)</span> `;
+                } else if (item.type === 'extra') {
+                    appendDiffToken(textDiv, 'incorrect', `${item.actual.display} (nadbytečné)`);
                     incorrectCount++;
                 } else {
-                    html += `<span class="word-diff incorrect">${userWordWithPunct} <span class="correct-hint">(správně: ${correctWord})</span></span> `;
+                    const span = appendDiffToken(textDiv, 'incorrect', item.actual.display);
+                    const hint = document.createElement('span');
+                    hint.className = 'correct-hint';
+                    hint.textContent = ` (správně: ${item.expected.display})`;
+                    span.appendChild(hint);
                     incorrectCount++;
                 }
-            }
-            
-            // Update stats
-            document.getElementById('total-words').textContent = maxLen;
+            });
+
+            document.getElementById('total-words').textContent = aligned.length;
             document.getElementById('correct-words').textContent = correctCount;
             document.getElementById('incorrect-words').textContent = incorrectCount;
-            
-            // Show output
-            textDiv.innerHTML = html;
-            outputDiv.classList.add('active');
+            document.getElementById('validation-output').classList.add('active');
         }
 
         function generateTranscription(greekText) {
-            let result = "";
+            const text = normalizeGreekText(greekText);
+            const result = [];
+            const vowels = new Set(rules.vowels);
             let i = 0;
-            
-            while (i < greekText.length) {
-                // Check for 2-character combinations with spiritus asper (highest priority)
-                if (i + 1 < greekText.length) {
-                    const twoChars = greekText.substring(i, i + 2);
-                    if (diphthongsWithAsper[twoChars]) {
-                        result += diphthongsWithAsper[twoChars];
+
+            while (i < text.length) {
+                if (i + 1 < text.length) {
+                    const pair = text.slice(i, i + 2);
+                    let mapped;
+                    if (hasRule(rules.diphthongs_with_asper, pair)) {
+                        mapped = rules.diphthongs_with_asper[pair];
+                    } else {
+                        const lowercasePair = pair.toLowerCase();
+                        if (hasRule(rules.diphthongs_with_asper, lowercasePair)) {
+                            mapped = rules.diphthongs_with_asper[lowercasePair];
+                        }
+                    }
+                    if (mapped !== undefined) {
+                        const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
+                        result.push(initial + mapped.slice(1));
+                        i += 2;
+                        continue;
+                    }
+
+                    if (hasRule(rules.diphthongs, pair)) {
+                        mapped = rules.diphthongs[pair];
+                    } else if (hasRule(rules.diphthongs, pair.toLowerCase())) {
+                        mapped = rules.diphthongs[pair.toLowerCase()];
+                    }
+                    if (mapped !== undefined) {
+                        const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
+                        result.push(initial + mapped.slice(1));
                         i += 2;
                         continue;
                     }
                 }
-                
-                // Check for 2-character diphthongs
-                if (i + 1 < greekText.length) {
-                    const twoChars = greekText.substring(i, i + 2);
-                    if (diphthongs[twoChars]) {
-                        result += diphthongs[twoChars];
-                        i += 2;
-                        continue;
-                    }
+
+                const character = text[i];
+                if (hasRule(rules.punctuation, character)) {
+                    result.push(rules.punctuation[character]);
+                } else if (hasRule(rules.combined_characters, character)) {
+                    result.push(rules.combined_characters[character]);
+                } else if (hasRule(rules.diaeresis_chars, character)) {
+                    const previous = result.length ? result[result.length - 1].slice(-1) : '';
+                    if (previous && vowels.has(previous)) result.push('-');
+                    result.push(rules.diaeresis_chars[character]);
+                } else if (hasRule(rules.greek_to_latin, character)) {
+                    result.push(rules.greek_to_latin[character]);
+                } else {
+                    result.push(character);
                 }
-                
-                // Check for punctuation
-                if (punctuation[greekText[i]]) {
-                    result += punctuation[greekText[i]];
-                    i++;
-                    continue;
-                }
-                
-                // Check for combined characters (with diacritics) - these are final, no further processing
-                if (combinedCharacters[greekText[i]]) {
-                    result += combinedCharacters[greekText[i]];
-                    i++;
-                    continue;
-                }
-                
-                // Check for diaeresis characters
-                if (diaeresisChars[greekText[i]]) {
-                    // Check if previous character (in result) is a vowel
-                    if (result.length > 0 && vowels.has(result[result.length - 1])) {
-                        result += "-";
-                    }
-                    result += diaeresisChars[greekText[i]];
-                    i++;
-                    continue;
-                }
-                
-                // Fall back to single character mapping
-                result += greekToLatin[greekText[i]] || greekText[i];
                 i++;
             }
-            
-            return result;
+
+            return result.join('');
         }
+
+        loadRules();
     </script>
 </body>
 </html>

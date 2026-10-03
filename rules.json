@@ -3,6 +3,7 @@
     ";": ";",
     "·": ":",
     "·": "",
+    "᾿": "'",
     ",": ",",
     ".": "."
   },
@@ -39,14 +40,14 @@
     "Ῠ": "Y", "Ῡ": "Y", "Ὺ": "Y", "Ύ": "Y", "Ῥ": "R"
   },
   "diphthongs_with_asper": {
-    "αὑ": "hau", "αὕ": "hau", "αὗ": "hau",
-    "Αὑ": "Hau", "Αὕ": "Hau", "Αὗ": "Hau",
-    "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
-    "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu"
+    "αὑ": "hau", "αὓ": "hau", "αὕ": "hau", "αὗ": "hau",
+    "ηὑ": "heu", "ηὓ": "heu", "ηὕ": "heu", "ηὗ": "heu"
   },
   "diphthongs": {
-    "αυ": "au", "αύ": "au", "αὺ": "au", "αῦ": "au", "ΑΎ": "Au", "Αὺ": "Au", "Αῦ": "Au",
-    "ηυ": "eu", "ηύ": "eu", "ΗΎ": "Eu"
+    "αυ": "au", "αὐ": "au", "αὔ": "au", "αὒ": "au", "αὖ": "au",
+    "αύ": "au", "αὺ": "au", "αῦ": "au",
+    "ηυ": "eu", "ηὐ": "eu", "ηὔ": "eu", "ηὒ": "eu", "ηὖ": "eu",
+    "ηύ": "eu", "ηὺ": "eu", "ηῦ": "eu"
   },
 
   "greek_to_latin": {
@@ -78,5 +79,113 @@
   "diaeresis_chars": {
     "ϊ": "i", "ΐ": "í",
     "ϋ": "y", "ΰ": "ý"
-  }
+  },
+  "unicode_normalization": "NFC",
+  "vowels": [
+    "a", "á", "e", "é", "i", "í", "o", "ó", "u", "y", "ý",
+    "A", "Á", "E", "É", "I", "Í", "O", "Ó", "U", "Y", "Ý"
+  ],
+  "validation_ignored_punctuation": [
+    ".", ",", ";", ":", "·", "·", "\"", "'", "«", "»", "„", "‹", "›"
+  ],
+  "transcription_examples": {
+    "greek": "λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον"
+  },
+  "teacher_summary": {
+    "alphabet": [
+      { "uppercase": "Α", "lowercase": "α", "latin": "a", "name": "alfa" },
+      { "uppercase": "Β", "lowercase": "β", "latin": "b", "name": "béta" },
+      { "uppercase": "Γ", "lowercase": "γ", "latin": "g", "name": "gamma" },
+      { "uppercase": "Δ", "lowercase": "δ", "latin": "d", "name": "delta" },
+      { "uppercase": "Ε", "lowercase": "ε", "latin": "e", "name": "e psílon" },
+      { "uppercase": "Ζ", "lowercase": "ζ", "latin": "z", "name": "zéta" },
+      { "uppercase": "Η", "lowercase": "η", "latin": "é", "name": "éta" },
+      { "uppercase": "Θ", "lowercase": "θ", "latin": "th", "name": "théta" },
+      { "uppercase": "Ι", "lowercase": "ι", "latin": "i", "name": "ióta" },
+      { "uppercase": "Κ", "lowercase": "κ", "latin": "k", "name": "kappa" },
+      { "uppercase": "Λ", "lowercase": "λ", "latin": "l", "name": "la/m/bda" },
+      { "uppercase": "Μ", "lowercase": "μ", "latin": "m", "name": "mý" },
+      { "uppercase": "Ν", "lowercase": "ν", "latin": "n", "name": "ný" },
+      { "uppercase": "Ξ", "lowercase": "ξ", "latin": "x", "name": "ksí" },
+      { "uppercase": "Ο", "lowercase": "ο", "latin": "o", "name": "o míkron" },
+      { "uppercase": "Π", "lowercase": "π", "latin": "p", "name": "pí" },
+      { "uppercase": "Ρ", "lowercase": "ρ", "latin": "r", "name": "ró" },
+      { "uppercase": "Σ", "lowercase": "σ", "final": "ς", "latin": "s", "name": "sígma" },
+      { "uppercase": "Τ", "lowercase": "τ", "latin": "t", "name": "tau" },
+      { "uppercase": "Υ", "lowercase": "υ", "latin": "y [ü]", "name": "ý psílon" },
+      { "uppercase": "Φ", "lowercase": "φ", "latin": "f", "name": "fí" },
+      { "uppercase": "Χ", "lowercase": "χ", "latin": "ch", "name": "chí" },
+      { "uppercase": "Ψ", "lowercase": "ψ", "latin": "ps", "name": "psí" }
+    ]
+  },
+  "rule_descriptions": [
+    {
+      "name": "Normalizace",
+      "description": "Textové úseky se před převodem normalizují do kanonického Unicode tvaru; mapovaná interpunkce zůstává nedotčena.",
+      "example": "Unicode: NFC"
+    },
+    {
+      "name": "Dvojhlásky s přídechem",
+      "description": "Specifické dvojice s ostrým přídechem se zpracují před běžnými dvojhláskami.",
+      "example": "αὑ → hau",
+      "complete_data": {
+        "mappings": [
+          { "label": "Dvojhlásky s přídechem", "key": "diphthongs_with_asper" }
+        ]
+      }
+    },
+    {
+      "name": "Běžné dvojhlásky",
+      "description": "Dvojice znaků se převedou jako celek; velikost písmene se řídí prvním znakem.",
+      "example": "αυ → au",
+      "complete_data": {
+        "mappings": [
+          { "label": "Dvojhlásky", "key": "diphthongs" }
+        ]
+      }
+    },
+    {
+      "name": "Interpunkce",
+      "description": "Interpunkční znaky se převedou podle mapování.",
+      "example": "; → ;",
+      "complete_data": {
+        "mappings": [
+          { "label": "Interpunkce", "key": "punctuation" }
+        ]
+      }
+    },
+    {
+      "name": "Kombinované znaky",
+      "description": "Po kontrole dvojhlásek a interpunkce se samostatné znaky s diakritikou převedou podle mapování.",
+      "example": "ἄ → á",
+      "complete_data": {
+        "mappings": [
+          { "label": "Kombinované znaky", "key": "combined_characters" }
+        ]
+      }
+    },
+    {
+      "name": "Trema",
+      "description": "U znaku s tremou se po předchozí samohlásce ve výstupu vloží oddělovací spojovník.",
+      "example": "αϊ → a-i",
+      "complete_data": {
+        "mappings": [
+          { "label": "Znaky s tremou", "key": "diaeresis_chars" }
+        ],
+        "settings": [
+          { "label": "Samohlásky pro vložení spojovníku", "key": "vowels" }
+        ]
+      }
+    },
+    {
+      "name": "Jednotlivá písmena",
+      "description": "Pokud neplatí žádné předchozí pravidlo, známá písmena se převedou podle mapování; neznámé znaky zůstanou zachovány.",
+      "example": "Θ → Th",
+      "complete_data": {
+        "mappings": [
+          { "label": "Jednotlivá písmena", "key": "greek_to_latin" }
+        ]
+      }
+    }
+  ]
 }
