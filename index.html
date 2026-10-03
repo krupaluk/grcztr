@@ -503,6 +503,27 @@
             ".": "."
         };
 
+        const diphthongsWithAsper = {
+            "αἱ": "haj", "αἵ": "haj", "αἷ": "haj",
+            "εἱ": "hej", "εἵ": "hej", "εἷ": "hej",
+            "οἱ": "hoj", "οἵ": "hoj", "οἷ": "hoj",
+            "υἱ": "hyj", "υἵ": "hyj", "υἷ": "hyj",
+            "αὑ": "hau", "αὕ": "hau", "αὗ": "hau",
+            "εὑ": "heu", "εὕ": "heu", "εὗ": "heu",
+            "ηὑ": "heu", "ηὕ": "heu", "ηὗ": "heu",
+            "οὑ": "hou", "οὕ": "hou", "οὗ": "hou",
+            "ωὑ": "hou", "ωὕ": "hou", "ωὗ": "hou",
+            "Αἱ": "Haj", "Αἵ": "Haj", "Αἷ": "Haj",
+            "Εἱ": "Hej", "Εἵ": "Hej", "Εἷ": "Hej",
+            "Οἱ": "Hoj", "Οἵ": "Hoj", "Οἷ": "Hoj",
+            "Υἱ": "Hyj", "Υἵ": "Hyj", "Υἷ": "Hyj",
+            "Αὑ": "Hau", "Αὕ": "Hau", "Αὗ": "Hau",
+            "Εὑ": "Heu", "Εὕ": "Heu", "Εὗ": "Heu",
+            "Ηὑ": "Heu", "Ηὕ": "Heu", "Ηὗ": "Heu",
+            "Οὑ": "Hou", "Οὕ": "Hou", "Οὗ": "Hou",
+            "Ωὑ": "Hou", "Ωὕ": "Hou", "Ωὗ": "Hou"
+        };
+
         const diphthongs = {
             "αι": "aj", "άι": "aj", "ΑΊ": "Aj",
             "ει": "ej", "εί": "ej", "ΕΊ": "Ej",
@@ -635,51 +656,60 @@
         }
 
         function generateTranscription(greekText) {
-            // Step 1: Normalize - remove ignored diacritics and track spiritus asper
-            let normalized = "";
-            let spiritusPositions = [];
-            
-            for (let i = 0; i < greekText.length; i++) {
-                const char = greekText[i];
-                
-                if (spiritusAsper[char]) {
-                    spiritusPositions.push(normalized.length);
-                }
-                
-                if (normalize[char]) {
-                    normalized += normalize[char];
-                } else {
-                    normalized += char;
-                }
-            }
-            
-            // Step 2: Apply transcription rules to normalized text
+            // Step 1: Check for diphthongs with spiritus asper (highest priority)
             let result = "";
+            let i = 0;
             
-            for (let i = 0; i < normalized.length; i++) {
-                if (spiritusPositions.includes(i)) {
-                    result += "h";
-                }
-                
-                if (punctuation[normalized[i]]) {
-                    result += punctuation[normalized[i]];
-                    continue;
-                }
-                
-                if (i + 1 < normalized.length) {
-                    const twoChars = normalized.substring(i, i + 2);
-                    if (diphthongs[twoChars]) {
-                        result += diphthongs[twoChars];
-                        i++;
+            while (i < greekText.length) {
+                // Check for 2-character combinations with spiritus asper
+                if (i + 1 < greekText.length) {
+                    const twoChars = greekText.substring(i, i + 2);
+                    if (diphthongsWithAsper[twoChars]) {
+                        result += diphthongsWithAsper[twoChars];
+                        i += 2;
                         continue;
                     }
                 }
                 
-                const char = normalized[i];
-                result += greekToLatin[char] || char;
+                // Check for single character with spiritus asper
+                if (spiritusAsper[greekText[i]]) {
+                    result += "h";
+                }
+                
+                // Normalize character
+                if (normalize[greekText[i]]) {
+                    result += normalize[greekText[i]];
+                } else {
+                    result += greekText[i];
+                }
+                
+                i++;
             }
             
-            return result;
+            // Step 2: Apply remaining rules to the result
+            let final = "";
+            for (let j = 0; j < result.length; j++) {
+                // Check for punctuation
+                if (punctuation[result[j]]) {
+                    final += punctuation[result[j]];
+                    continue;
+                }
+                
+                // Check for diphthongs
+                if (j + 1 < result.length) {
+                    const twoChars = result.substring(j, j + 2);
+                    if (diphthongs[twoChars]) {
+                        final += diphthongs[twoChars];
+                        j++;
+                        continue;
+                    }
+                }
+                
+                // Fall back to single character mapping
+                final += greekToLatin[result[j]] || result[j];
+            }
+            
+            return final;
         }
     </script>
 </body>
