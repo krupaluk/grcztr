@@ -517,7 +517,7 @@
 </head>
 <body>
     <button class="info-icon" type="button" onclick="openModal()" aria-label="O aplikaci">i</button>
-    <button class="info-icon teacher-icon" type="button" onclick="openTeacherModal()" aria-label="Otevřít souhrn od vyučujícího" title="Souhrn od vyučujícího">V</button>
+    <button class="info-icon teacher-icon" type="button" onclick="openTeacherModal()" aria-label="Otevřít Knihu Pravidel" title="Kniha Pravidel">V</button>
     
     <div class="container">
         <h1>Řečtina → Čeština</h1>
@@ -603,7 +603,7 @@
 
     <div class="modal" id="teacherSummaryModal" role="dialog" aria-modal="true" aria-labelledby="teacher-summary-title">
         <div class="modal-content">
-            <h2 id="teacher-summary-title">Souhrn pravidel od vyučujícího</h2>
+            <h2 id="teacher-summary-title">Kniha Pravidel</h2>
             <table class="teacher-summary-table">
                 <thead>
                     <tr>
@@ -681,66 +681,189 @@
         function renderTeacherSummary(ruleData) {
             const tableBody = document.getElementById('teacher-summary-table-body');
             tableBody.replaceChildren();
+            const alphabet = ruleData.teacher_summary.alphabet;
+            const splitIndex = Math.ceil(alphabet.length / 2);
+            addTeacherSummarySection(tableBody, 'Řecká AlfaBeta', container => {
+                const grid = document.createElement('div');
+                grid.className = 'teacher-alphabet-grid';
+                [alphabet.slice(0, splitIndex), alphabet.slice(splitIndex)].forEach(letters => {
+                    const rows = letters.map(letter => [
+                        [letter.uppercase, letter.lowercase, letter.final].filter(Boolean).join(' / '),
+                        letter.latin,
+                        letter.name
+                    ]);
+                    grid.appendChild(createTeacherTable(['Řecky', 'Přepis', 'Název'], rows));
+                });
+                container.appendChild(grid);
+            });
+
+            addTeacherSummarySection(tableBody, 'Dvojhlásky', container => {
+                const rows = ruleData.teacher_summary.diphthongs.map(diphthong => [
+                    diphthong.greek,
+                    diphthong.pronunciation,
+                    diphthong.transcription
+                ]);
+                container.appendChild(createTeacherTable(['Řecky', 'Výslovnost', 'Přepis'], rows));
+            });
+
+            const smoothAccent = ruleData.teacher_summary.accent.smooth;
+            const smoothAccentRow = document.createElement('tr');
+            const smoothAccentName = document.createElement('td');
+            smoothAccentName.textContent = smoothAccent.name;
+            smoothAccentRow.appendChild(smoothAccentName);
+            const smoothAccentDetails = document.createElement('td');
+            smoothAccentDetails.textContent = `${smoothAccent.description} Příklad: ${smoothAccent.examples}`;
+            smoothAccentRow.appendChild(smoothAccentDetails);
+            tableBody.appendChild(smoothAccentRow);
+
+            const roughAccent = ruleData.teacher_summary.accent.rough;
+            addTeacherSummarySection(tableBody, roughAccent.name, container => {
+                const mappings = ruleData[roughAccent.diphthongs_key];
+                const rows = Object.entries(mappings).map(([greek, transcription]) => [
+                    greek,
+                    transcription
+                ]);
+                container.appendChild(createTeacherTable(['Dvojhláska s ostrým přízvukem', 'Přepis'], rows));
+
+                const rhoSpecial = roughAccent.rho_special;
+                const rhoDescription = document.createElement('p');
+                rhoDescription.textContent = rhoSpecial.description;
+                container.appendChild(rhoDescription);
+
+                const rhoExample = document.createElement('p');
+                rhoExample.textContent = rhoSpecial.example;
+                container.appendChild(rhoExample);
+
+                const rhoMappings = ruleData[rhoSpecial.mappings_key];
+                const rhoRows = Object.entries(rhoMappings).map(([greek, transcription]) => [
+                    greek,
+                    transcription
+                ]);
+                container.appendChild(createTeacherTable(['Počáteční ró s ostrým přídechem', 'Přepis'], rhoRows));
+            });
+
+            addTeacherSummarySection(tableBody, 'Délka samohlásek', container => {
+                const rows = ruleData.teacher_summary.vowel_lengths.map(item => [
+                    item.vowels,
+                    item.length
+                ]);
+                container.appendChild(createTeacherTable(['Samohlásky', 'Délka'], rows));
+            });
+
+            addTeacherSummarySection(tableBody, 'Interpunkce', container => {
+                const rows = ruleData.teacher_summary.punctuation.map(item => [
+                    item.greek,
+                    item.czech
+                ]);
+                container.appendChild(createTeacherTable(['Řecké znaménko', 'Český zápis'], rows));
+
+                const example = ruleData.teacher_summary.punctuation_example;
+                const exampleText = document.createElement('p');
+                exampleText.textContent = `${example.greek} → ${example.transcription}`;
+                container.appendChild(exampleText);
+            });
+
+            const diaeresis = ruleData.teacher_summary.diaeresis;
+            addTeacherSummarySection(tableBody, diaeresis.name, container => {
+                const description = document.createElement('p');
+                description.textContent = `${diaeresis.mark} ${diaeresis.description} Příklad: ${diaeresis.example}`;
+                container.appendChild(description);
+                const breathingNote = document.createElement('p');
+                breathingNote.textContent = diaeresis.breathing_note;
+                container.appendChild(breathingNote);
+
+                const examples = diaeresis.examples.map(example => [
+                    example.greek,
+                    example.transcription
+                ]);
+                container.appendChild(createTeacherTable(['Řecká podoba', 'Přepis'], examples));
+            });
+
+            const elision = ruleData.teacher_summary.elision;
+            addTeacherSummarySection(tableBody, elision.name, container => {
+                const description = document.createElement('p');
+                description.textContent = elision.description;
+                container.appendChild(description);
+
+                const rows = elision.examples.map(example => [
+                    example.greek,
+                    example.transcription
+                ]);
+                container.appendChild(createTeacherTable(['Řecká podoba', 'Přepis'], rows));
+            });
+
+            const iotaSubscript = ruleData.teacher_summary.iota_subscript;
+            addTeacherSummarySection(tableBody, iotaSubscript.name, container => {
+                const description = document.createElement('p');
+                description.textContent = iotaSubscript.description;
+                container.appendChild(description);
+
+                const uppercaseNote = document.createElement('p');
+                uppercaseNote.textContent = iotaSubscript.uppercase_note;
+                container.appendChild(uppercaseNote);
+
+                const rows = iotaSubscript.examples.map(example => [
+                    example.greek,
+                    example.transcription
+                ]);
+                container.appendChild(createTeacherTable(['Řecká podoba', 'Přepis'], rows));
+            });
+        }
+
+        function addTeacherSummarySection(tableBody, title, renderContent) {
             const row = document.createElement('tr');
             const name = document.createElement('td');
-            name.textContent = 'Řecká AlfaBeta';
+            name.textContent = title;
             row.appendChild(name);
 
-            const content = document.createElement('td');
+            const details = document.createElement('td');
             const toggle = document.createElement('button');
             toggle.type = 'button';
             toggle.className = 'teacher-summary-toggle';
             toggle.textContent = 'Zobrazit';
             toggle.setAttribute('aria-expanded', 'false');
 
-            const alphabetContainer = document.createElement('div');
-            alphabetContainer.className = 'teacher-alphabet-container';
-            alphabetContainer.hidden = true;
-            const alphabetGrid = document.createElement('div');
-            alphabetGrid.className = 'teacher-alphabet-grid';
-            const alphabet = ruleData.teacher_summary.alphabet;
-            const splitIndex = Math.ceil(alphabet.length / 2);
-            [alphabet.slice(0, splitIndex), alphabet.slice(splitIndex)].forEach(letters => {
-                const alphabetTable = document.createElement('table');
-                alphabetTable.className = 'teacher-alphabet-table';
-                const head = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-                ['Řecky', 'Přepis', 'Název'].forEach(label => {
-                    const cell = document.createElement('th');
-                    cell.textContent = label;
-                    headerRow.appendChild(cell);
-                });
-                head.appendChild(headerRow);
-                alphabetTable.appendChild(head);
-
-                const body = document.createElement('tbody');
-                letters.forEach(letter => {
-                    const letterRow = document.createElement('tr');
-                    [
-                        [letter.uppercase, letter.lowercase, letter.final].filter(Boolean).join(' / '),
-                        letter.latin,
-                        letter.name
-                    ].forEach(value => {
-                        const cell = document.createElement('td');
-                        cell.textContent = value;
-                        letterRow.appendChild(cell);
-                    });
-                    body.appendChild(letterRow);
-                });
-                alphabetTable.appendChild(body);
-                alphabetGrid.appendChild(alphabetTable);
-            });
-            alphabetContainer.appendChild(alphabetGrid);
+            const container = document.createElement('div');
+            container.className = 'teacher-alphabet-container';
+            container.hidden = true;
+            renderContent(container);
 
             toggle.addEventListener('click', () => {
-                alphabetContainer.hidden = !alphabetContainer.hidden;
-                toggle.textContent = alphabetContainer.hidden ? 'Zobrazit' : 'Skrýt';
-                toggle.setAttribute('aria-expanded', String(!alphabetContainer.hidden));
+                container.hidden = !container.hidden;
+                toggle.textContent = container.hidden ? 'Zobrazit' : 'Skrýt';
+                toggle.setAttribute('aria-expanded', String(!container.hidden));
             });
-            content.appendChild(toggle);
-            content.appendChild(alphabetContainer);
-            row.appendChild(content);
+            details.appendChild(toggle);
+            details.appendChild(container);
+            row.appendChild(details);
             tableBody.appendChild(row);
+        }
+
+        function createTeacherTable(headers, rows) {
+            const table = document.createElement('table');
+            table.className = 'teacher-alphabet-table';
+            const head = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headers.forEach(label => {
+                const cell = document.createElement('th');
+                cell.textContent = label;
+                headerRow.appendChild(cell);
+            });
+            head.appendChild(headerRow);
+            table.appendChild(head);
+
+            const body = document.createElement('tbody');
+            rows.forEach(values => {
+                const row = document.createElement('tr');
+                values.forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+                body.appendChild(row);
+            });
+            table.appendChild(body);
+            return table;
         }
 
         function openRuleDetails(rule, ruleData) {
@@ -799,16 +922,45 @@
                 const requiredMappings = [
                     'punctuation',
                     'combined_characters',
+                    'initial_rho_with_asper',
                     'diphthongs_with_asper',
                     'diphthongs',
+                    'elisions',
                     'greek_to_latin',
                     'diaeresis_chars'
                 ];
                 if (requiredMappings.some(name => !loadedRules[name]) ||
+                    !loadedRules.diphthong_vowel_variants ||
                     !Array.isArray(loadedRules.vowels) ||
                     !Array.isArray(loadedRules.validation_ignored_punctuation) ||
                     !loadedRules.teacher_summary ||
                     !Array.isArray(loadedRules.teacher_summary.alphabet) ||
+                    !Array.isArray(loadedRules.teacher_summary.diphthongs) ||
+                    !loadedRules.teacher_summary.accent ||
+                    !loadedRules.teacher_summary.accent.rough ||
+                    !loadedRules.teacher_summary.accent.smooth ||
+                    typeof loadedRules.teacher_summary.accent.rough.diphthongs_key !== 'string' ||
+                    !loadedRules[loadedRules.teacher_summary.accent.rough.diphthongs_key] ||
+                    !loadedRules.teacher_summary.accent.rough.rho_special ||
+                    typeof loadedRules.teacher_summary.accent.rough.rho_special.description !== 'string' ||
+                    typeof loadedRules.teacher_summary.accent.rough.rho_special.example !== 'string' ||
+                    typeof loadedRules.teacher_summary.accent.rough.rho_special.mappings_key !== 'string' ||
+                    !loadedRules[loadedRules.teacher_summary.accent.rough.rho_special.mappings_key] ||
+                    !Array.isArray(loadedRules.teacher_summary.vowel_lengths) ||
+                    !Array.isArray(loadedRules.teacher_summary.punctuation) ||
+                    !loadedRules.teacher_summary.punctuation_example ||
+                    typeof loadedRules.teacher_summary.punctuation_example.greek !== 'string' ||
+                    typeof loadedRules.teacher_summary.punctuation_example.transcription !== 'string' ||
+                    !loadedRules.teacher_summary.diaeresis ||
+                    typeof loadedRules.teacher_summary.diaeresis.breathing_note !== 'string' ||
+                    !Array.isArray(loadedRules.teacher_summary.diaeresis.examples) ||
+                    !loadedRules.teacher_summary.elision ||
+                    typeof loadedRules.teacher_summary.elision.description !== 'string' ||
+                    !Array.isArray(loadedRules.teacher_summary.elision.examples) ||
+                    !loadedRules.teacher_summary.iota_subscript ||
+                    typeof loadedRules.teacher_summary.iota_subscript.description !== 'string' ||
+                    typeof loadedRules.teacher_summary.iota_subscript.uppercase_note !== 'string' ||
+                    !Array.isArray(loadedRules.teacher_summary.iota_subscript.examples) ||
                     !Array.isArray(loadedRules.rule_descriptions) ||
                     loadedRules.rule_descriptions.some(rule =>
                         typeof rule.example !== 'string' ||
@@ -1039,10 +1191,28 @@
         function generateTranscription(greekText) {
             const text = normalizeGreekText(greekText);
             const result = [];
-            const vowels = new Set(rules.vowels);
             let i = 0;
 
             while (i < text.length) {
+                const previousCharacter = [...text.slice(0, i)].pop();
+                const startsWord = !previousCharacter || !/[\p{L}\p{M}]/u.test(previousCharacter);
+                const initialRho = rules.initial_rho_with_asper[text[i]];
+                if (startsWord && initialRho !== undefined) {
+                    result.push(initialRho);
+                    i++;
+                    continue;
+                }
+
+                const elision = Object.keys(rules.elisions)
+                    .find(sequence => text.startsWith(sequence, i));
+                if (elision) {
+                    const mapped = rules.elisions[elision];
+                    const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
+                    result.push(initial + mapped.slice(1));
+                    i += elision.length;
+                    continue;
+                }
+
                 if (i + 1 < text.length) {
                     const pair = text.slice(i, i + 2);
                     let mapped;
@@ -1061,10 +1231,14 @@
                         continue;
                     }
 
-                    if (hasRule(rules.diphthongs, pair)) {
-                        mapped = rules.diphthongs[pair];
-                    } else if (hasRule(rules.diphthongs, pair.toLowerCase())) {
-                        mapped = rules.diphthongs[pair.toLowerCase()];
+                    const normalizedPair = [...pair]
+                        .map(character => {
+                            const lowercaseCharacter = character.toLowerCase();
+                            return rules.diphthong_vowel_variants[lowercaseCharacter] || lowercaseCharacter;
+                        })
+                            .join('');
+                    if (hasRule(rules.diphthongs, normalizedPair)) {
+                        mapped = rules.diphthongs[normalizedPair];
                     }
                     if (mapped !== undefined) {
                         const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
@@ -1080,8 +1254,6 @@
                 } else if (hasRule(rules.combined_characters, character)) {
                     result.push(rules.combined_characters[character]);
                 } else if (hasRule(rules.diaeresis_chars, character)) {
-                    const previous = result.length ? result[result.length - 1].slice(-1) : '';
-                    if (previous && vowels.has(previous)) result.push('-');
                     result.push(rules.diaeresis_chars[character]);
                 } else if (hasRule(rules.greek_to_latin, character)) {
                     result.push(rules.greek_to_latin[character]);

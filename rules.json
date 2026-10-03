@@ -41,13 +41,38 @@
   },
   "diphthongs_with_asper": {
     "αὑ": "hau", "αὓ": "hau", "αὕ": "hau", "αὗ": "hau",
-    "ηὑ": "heu", "ηὓ": "heu", "ηὕ": "heu", "ηὗ": "heu"
+    "ηὑ": "héu", "ηὓ": "héu", "ηὕ": "héu", "ηὗ": "héu"
+  },
+  "initial_rho_with_asper": {
+    "ῥ": "rh",
+    "Ῥ": "Rh"
+  },
+  "elisions": {
+    "δ᾿": "dé",
+    "Δ᾿": "Dé"
   },
   "diphthongs": {
+    "αι": "aj",
+    "ει": "ej",
+    "οι": "oj",
+    "υι": "yj",
     "αυ": "au", "αὐ": "au", "αὔ": "au", "αὒ": "au", "αὖ": "au",
     "αύ": "au", "αὺ": "au", "αῦ": "au",
-    "ηυ": "eu", "ηὐ": "eu", "ηὔ": "eu", "ηὒ": "eu", "ηὖ": "eu",
-    "ηύ": "eu", "ηὺ": "eu", "ηῦ": "eu"
+    "ευ": "eu", "εὐ": "eu", "εὔ": "eu", "εὒ": "eu", "εὖ": "eu",
+    "εύ": "eu", "εὺ": "eu", "εῦ": "eu",
+    "ηυ": "éu", "ηὐ": "éu", "ηὔ": "éu", "ηὒ": "éu", "ηὖ": "éu",
+    "ηύ": "éu", "ηὺ": "éu", "ηῦ": "éu",
+    "ου": "ú",
+    "ωυ": "óu"
+  },
+  "diphthong_vowel_variants": {
+    "ά": "α", "ὰ": "α", "ᾶ": "α", "Ἀ": "α", "ἂ": "α", "ἄ": "α", "ἆ": "α",
+    "έ": "ε", "ὲ": "ε", "ἐ": "ε", "ἒ": "ε", "ἔ": "ε",
+    "ή": "η", "ὴ": "η", "ῆ": "η", "ἠ": "η", "ἢ": "η", "ἤ": "η", "ἦ": "η",
+    "ί": "ι", "ὶ": "ι", "ῖ": "ι", "ἰ": "ι", "ἲ": "ι", "ἴ": "ι", "ἶ": "ι",
+    "ό": "ο", "ὸ": "ο", "ὀ": "ο", "ὂ": "ο", "ὄ": "ο",
+    "ύ": "υ", "ὺ": "υ", "ῦ": "υ", "ὐ": "υ", "ὒ": "υ", "ὔ": "υ", "ὖ": "υ",
+    "ώ": "ω", "ὼ": "ω", "ῶ": "ω", "ὠ": "ω", "ὢ": "ω", "ὤ": "ω", "ὦ": "ω"
   },
 
   "greek_to_latin": {
@@ -77,8 +102,8 @@
     "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó", "ώ": "ó"
   },
   "diaeresis_chars": {
-    "ϊ": "i", "ΐ": "í",
-    "ϋ": "y", "ΰ": "ý"
+    "ϊ": "ï", "ΐ": "ḯ",
+    "ϋ": "ÿ", "ΰ": "ÿ́"
   },
   "unicode_normalization": "NFC",
   "vowels": [
@@ -116,13 +141,105 @@
       { "uppercase": "Φ", "lowercase": "φ", "latin": "f", "name": "fí" },
       { "uppercase": "Χ", "lowercase": "χ", "latin": "ch", "name": "chí" },
       { "uppercase": "Ψ", "lowercase": "ψ", "latin": "ps", "name": "psí" }
-    ]
+    ],
+    "diphthongs": [
+      { "greek": "αι", "pronunciation": "[aj]", "transcription": "aj" },
+      { "greek": "ει", "pronunciation": "[ej]", "transcription": "ej" },
+      { "greek": "οι", "pronunciation": "[oj]", "transcription": "oj" },
+      { "greek": "υι", "pronunciation": "[yj]", "transcription": "yj" },
+      { "greek": "αυ", "pronunciation": "[au]", "transcription": "au" },
+      { "greek": "ευ", "pronunciation": "[eu]", "transcription": "eu" },
+      { "greek": "ηυ", "pronunciation": "[éu]", "transcription": "éu" },
+      { "greek": "ου", "pronunciation": "[ú]", "transcription": "ú" },
+      { "greek": "ωυ", "pronunciation": "[óu]", "transcription": "óu" }
+    ],
+    "accent": {
+      "rough": {
+        "name": "Ostrý přízvuk",
+        "description": "Čte se jako „h“ na začátku slova.",
+        "diphthongs_key": "diphthongs_with_asper",
+        "rho_special": {
+          "description": "Zvláštní případ: počáteční ρ s ostrým přídechem se přepisuje jako rh a toto pravidlo má přednost před obecným pravidlem přídechu.",
+          "example": "Ῥόδος → Rhódos",
+          "mappings_key": "initial_rho_with_asper"
+        }
+      },
+      "smooth": {
+        "name": "Jemný přízvuk",
+        "description": "Nečte se.",
+        "examples": "ἀρχή – arché; ἒφασκεν – efasken"
+      }
+    },
+    "vowel_lengths": [
+      { "vowels": "ε, ο", "length": "Vždy krátké" },
+      { "vowels": "η, ω", "length": "Vždy dlouhé" },
+      { "vowels": "α, υ, ι", "length": "Někdy dlouhé, někdy krátké" }
+    ],
+    "punctuation": [
+      { "greek": "Řecký otázník (;)", "czech": "Středník (;)" },
+      { "greek": "Zvýšená tečka (·)", "czech": "Dvojtečka (:)" },
+      { "greek": "Čárka", "czech": "Čárka (,)" },
+      { "greek": "Tečka", "czech": "Tečka (.)" }
+    ],
+    "punctuation_example": {
+      "greek": "τί ἐστιν;",
+      "transcription": "tí estin;"
+    },
+    "diaeresis": {
+      "name": "Diairesis",
+      "mark": "¨",
+      "description": "Ukazuje, že dvě sousední samohlásky netvoří dvojhlásku.",
+      "example": "αϊ → aï",
+      "breathing_note": "Diairesis se v běžném starořeckém pravopisu nekombinuje s přídechem na stejném písmenu.",
+      "examples": [
+        { "greek": "αϊ", "transcription": "aï" },
+        { "greek": "εϊ", "transcription": "eï" },
+        { "greek": "οϊ", "transcription": "oï" },
+        { "greek": "υϊ", "transcription": "yï" },
+        { "greek": "αϋ", "transcription": "aÿ" },
+        { "greek": "εϋ", "transcription": "eÿ" },
+        { "greek": "ηϋ", "transcription": "éÿ" },
+        { "greek": "οϋ", "transcription": "oÿ" },
+        { "greek": "ωϋ", "transcription": "óÿ" }
+      ]
+    },
+    "elision": {
+      "name": "Elize δέ",
+      "description": "Elize δέ je zkrácené δέ; při transkripci se píše dé.",
+      "examples": [
+        { "greek": "δ᾿", "transcription": "dé" },
+        { "greek": "δέ", "transcription": "dé" }
+      ]
+    },
+    "iota_subscript": {
+      "name": "Ióta subscriptum",
+      "description": "Ióta pod α, η nebo ω se nevyslovuje.",
+      "uppercase_note": "U velkých písmen se ióta často píše vedle (ióta adscriptum); v tomto přepisu se nevyslovovaná ióta nezapisuje.",
+      "examples": [
+        { "greek": "ᾳ", "transcription": "a" },
+        { "greek": "ῃ", "transcription": "é" },
+        { "greek": "ῳ", "transcription": "ó" },
+        { "greek": "ᾼ", "transcription": "A" },
+        { "greek": "ῌ", "transcription": "É" },
+        { "greek": "ῼ", "transcription": "Ó" }
+      ]
+    }
   },
   "rule_descriptions": [
     {
       "name": "Normalizace",
       "description": "Textové úseky se před převodem normalizují do kanonického Unicode tvaru; mapovaná interpunkce zůstává nedotčena.",
       "example": "Unicode: NFC"
+    },
+    {
+      "name": "Počáteční ró s ostrým přídechem",
+      "description": "Na začátku slova se ρ s ostrým přídechem přepisuje jako rh; toto zvláštní pravidlo má přednost před obecným pravidlem přídechu.",
+      "example": "Ῥόδος → Rhódos",
+      "complete_data": {
+        "mappings": [
+          { "label": "Počáteční ró s ostrým přídechem", "key": "initial_rho_with_asper" }
+        ]
+      }
     },
     {
       "name": "Dvojhlásky s přídechem",
@@ -135,12 +252,23 @@
       }
     },
     {
+      "name": "Elize",
+      "description": "Zkrácená podoba δέ se při transkripci zapíše stejně jako plná podoba.",
+      "example": "δ᾿ → dé; δέ → dé",
+      "complete_data": {
+        "mappings": [
+          { "label": "Elize", "key": "elisions" }
+        ]
+      }
+    },
+    {
       "name": "Běžné dvojhlásky",
-      "description": "Dvojice znaků se převedou jako celek; velikost písmene se řídí prvním znakem.",
+      "description": "Dvojice znaků se převedou jako celek; přízvukové a hladké přídechové varianty samohlásek se převedou podle základní podoby a velikost písmene se řídí prvním znakem.",
       "example": "αυ → au",
       "complete_data": {
         "mappings": [
-          { "label": "Dvojhlásky", "key": "diphthongs" }
+          { "label": "Dvojhlásky", "key": "diphthongs" },
+          { "label": "Přízvukové a hladké přídechové varianty samohlásek", "key": "diphthong_vowel_variants" }
         ]
       }
     },
@@ -166,14 +294,11 @@
     },
     {
       "name": "Trema",
-      "description": "U znaku s tremou se po předchozí samohlásce ve výstupu vloží oddělovací spojovník.",
-      "example": "αϊ → a-i",
+      "description": "Trema ukazuje, že dvě sousední samohlásky netvoří dvojhlásku.",
+      "example": "αϊ → aï",
       "complete_data": {
         "mappings": [
           { "label": "Znaky s tremou", "key": "diaeresis_chars" }
-        ],
-        "settings": [
-          { "label": "Samohlásky pro vložení spojovníku", "key": "vowels" }
         ]
       }
     },
