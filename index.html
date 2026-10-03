@@ -386,7 +386,15 @@
 
             <button onclick="validate()">Validuj českou transkripci</button>
 
-            <div id="validation-result" class="validation-result"></div>
+            <div id="validation-output" class="validation-output">
+                <h3>Výstup validace</h3>
+                <div class="validation-stats">
+                    <span class="total">Celkem: <span id="total-words">0</span></span>
+                    <span class="correct">Správně: <span id="correct-words">0</span></span>
+                    <span class="incorrect">Špatně: <span id="incorrect-words">0</span></span>
+                </div>
+                <div id="validation-text" class="validation-text"></div>
+            </div>
         </div>
     </div>
 
@@ -576,12 +584,11 @@
         function validate() {
             const greekText = document.getElementById('validator-greek').value;
             const userTranscription = document.getElementById('validator-czech').value;
-            const resultDiv = document.getElementById('validation-result');
+            const outputDiv = document.getElementById('validation-output');
+            const textDiv = document.getElementById('validation-text');
             
             if (!greekText.trim() || !userTranscription.trim()) {
-                resultDiv.style.display = 'block';
-                resultDiv.className = 'validation-result error';
-                resultDiv.innerHTML = 'Prosím vyplňte obě pole.';
+                alert('Prosím vyplňte obě pole.');
                 return;
             }
             
@@ -593,7 +600,8 @@
             const correctWords = correctTranscription.trim().split(/\s+/);
             
             let html = '';
-            let hasErrors = false;
+            let correctCount = 0;
+            let incorrectCount = 0;
             
             const maxLen = Math.max(userWords.length, correctWords.length);
             
@@ -603,26 +611,27 @@
                 
                 if (userWord === correctWord) {
                     html += `<span class="word-diff correct">${userWord}</span> `;
+                    correctCount++;
                 } else if (!userWord) {
                     html += `<span class="word-diff missing">(chybí: ${correctWord})</span> `;
-                    hasErrors = true;
+                    incorrectCount++;
                 } else if (!correctWord) {
                     html += `<span class="word-diff incorrect">${userWord} (nadbytečné)</span> `;
-                    hasErrors = true;
+                    incorrectCount++;
                 } else {
-                    html += `<span class="word-diff incorrect">${userWord} (správně: ${correctWord})</span> `;
-                    hasErrors = true;
+                    html += `<span class="word-diff incorrect">${userWord} <span class="correct-hint">(správně: ${correctWord})</span></span> `;
+                    incorrectCount++;
                 }
             }
             
-            resultDiv.style.display = 'block';
-            if (hasErrors) {
-                resultDiv.className = 'validation-result error';
-                resultDiv.innerHTML = '<strong>Nalezeny chyby:</strong><br><br>' + html;
-            } else {
-                resultDiv.className = 'validation-result success';
-                resultDiv.innerHTML = '<strong>Transkripce je správná!</strong><br><br>' + html;
-            }
+            // Update stats
+            document.getElementById('total-words').textContent = maxLen;
+            document.getElementById('correct-words').textContent = correctCount;
+            document.getElementById('incorrect-words').textContent = incorrectCount;
+            
+            // Show output
+            textDiv.innerHTML = html;
+            outputDiv.classList.add('active');
         }
 
         function generateTranscription(greekText) {
