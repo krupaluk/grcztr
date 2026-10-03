@@ -697,6 +697,20 @@
                 container.appendChild(grid);
             });
 
+            const gammaPronunciation = ruleData.teacher_summary.gamma_pronunciation;
+            addTeacherSummarySection(tableBody, gammaPronunciation.name, container => {
+                const description = document.createElement('p');
+                description.textContent = gammaPronunciation.description;
+                container.appendChild(description);
+
+                const rows = gammaPronunciation.examples.map(example => [
+                    example.greek,
+                    example.pronunciation,
+                    example.transcription
+                ]);
+                container.appendChild(createTeacherTable(['Řecký příklad', 'Výslovnost podle učebnice', 'Přepis'], rows));
+            });
+
             addTeacherSummarySection(tableBody, 'Dvojhlásky', container => {
                 const rows = ruleData.teacher_summary.diphthongs.map(diphthong => [
                     diphthong.greek,
@@ -704,6 +718,10 @@
                     diphthong.transcription
                 ]);
                 container.appendChild(createTeacherTable(['Řecky', 'Výslovnost', 'Přepis'], rows));
+
+                const accentNote = document.createElement('p');
+                accentNote.textContent = ruleData.teacher_summary.diphthong_accent_note;
+                container.appendChild(accentNote);
             });
 
             const smoothAccent = ruleData.teacher_summary.accent.smooth;
@@ -723,7 +741,7 @@
                     greek,
                     transcription
                 ]);
-                container.appendChild(createTeacherTable(['Dvojhláska s ostrým přízvukem', 'Přepis'], rows));
+                container.appendChild(createTeacherTable(['Dvojhláska s ostrým přídechem', 'Přepis'], rows));
 
                 const rhoSpecial = roughAccent.rho_special;
                 const rhoDescription = document.createElement('p');
@@ -777,6 +795,12 @@
                     example.transcription
                 ]);
                 container.appendChild(createTeacherTable(['Řecká podoba', 'Přepis'], examples));
+
+                const textbookExample = diaeresis.textbook_example;
+                const textbookExampleText = document.createElement('p');
+                textbookExampleText.textContent =
+                    `Příklad z učebnice: ${textbookExample.greek} ${textbookExample.pronunciation}; přepis: ${textbookExample.transcription}`;
+                container.appendChild(textbookExampleText);
             });
 
             const elision = ruleData.teacher_summary.elision;
@@ -923,6 +947,8 @@
                     'punctuation',
                     'combined_characters',
                     'initial_rho_with_asper',
+                    'special_word_transcriptions',
+                    'gamma_nasal_clusters',
                     'diphthongs_with_asper',
                     'diphthongs',
                     'elisions',
@@ -931,11 +957,22 @@
                 ];
                 if (requiredMappings.some(name => !loadedRules[name]) ||
                     !loadedRules.diphthong_vowel_variants ||
+                    typeof loadedRules.diphthong_acute_mark !== 'string' ||
+                    typeof loadedRules.rough_breathing_mark !== 'string' ||
+                    !loadedRules.diphthong_accent_targets ||
                     !Array.isArray(loadedRules.vowels) ||
                     !Array.isArray(loadedRules.validation_ignored_punctuation) ||
                     !loadedRules.teacher_summary ||
                     !Array.isArray(loadedRules.teacher_summary.alphabet) ||
+                    !loadedRules.teacher_summary.gamma_pronunciation ||
+                    typeof loadedRules.teacher_summary.gamma_pronunciation.description !== 'string' ||
+                    !Array.isArray(loadedRules.teacher_summary.gamma_pronunciation.examples) ||
+                    loadedRules.teacher_summary.gamma_pronunciation.examples.some(example =>
+                        typeof example.greek !== 'string' ||
+                        typeof example.pronunciation !== 'string' ||
+                        typeof example.transcription !== 'string') ||
                     !Array.isArray(loadedRules.teacher_summary.diphthongs) ||
+                    typeof loadedRules.teacher_summary.diphthong_accent_note !== 'string' ||
                     !loadedRules.teacher_summary.accent ||
                     !loadedRules.teacher_summary.accent.rough ||
                     !loadedRules.teacher_summary.accent.smooth ||
@@ -953,6 +990,10 @@
                     typeof loadedRules.teacher_summary.punctuation_example.transcription !== 'string' ||
                     !loadedRules.teacher_summary.diaeresis ||
                     typeof loadedRules.teacher_summary.diaeresis.breathing_note !== 'string' ||
+                    !loadedRules.teacher_summary.diaeresis.textbook_example ||
+                    typeof loadedRules.teacher_summary.diaeresis.textbook_example.greek !== 'string' ||
+                    typeof loadedRules.teacher_summary.diaeresis.textbook_example.pronunciation !== 'string' ||
+                    typeof loadedRules.teacher_summary.diaeresis.textbook_example.transcription !== 'string' ||
                     !Array.isArray(loadedRules.teacher_summary.diaeresis.examples) ||
                     !loadedRules.teacher_summary.elision ||
                     typeof loadedRules.teacher_summary.elision.description !== 'string' ||
@@ -1196,6 +1237,17 @@
             while (i < text.length) {
                 const previousCharacter = [...text.slice(0, i)].pop();
                 const startsWord = !previousCharacter || !/[\p{L}\p{M}]/u.test(previousCharacter);
+                if (startsWord) {
+                    const specialWord = Object.keys(rules.special_word_transcriptions)
+                        .find(word => text.startsWith(word, i) &&
+                            (!text[i + word.length] || !/[\p{L}\p{M}]/u.test(text[i + word.length])));
+                    if (specialWord) {
+                        result.push(rules.special_word_transcriptions[specialWord]);
+                        i += specialWord.length;
+                        continue;
+                    }
+                }
+
                 const initialRho = rules.initial_rho_with_asper[text[i]];
                 if (startsWord && initialRho !== undefined) {
                     result.push(initialRho);
@@ -1216,15 +1268,24 @@
                 if (i + 1 < text.length) {
                     const pair = text.slice(i, i + 2);
                     let mapped;
+                    const lowercasePair = pair.toLowerCase();
+                    if (hasRule(rules.gamma_nasal_clusters, lowercasePair)) {
+                        mapped = rules.gamma_nasal_clusters[lowercasePair];
+                        const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
+                        result.push(initial + mapped.slice(1));
+                        i += 2;
+                        continue;
+                    }
+
                     if (hasRule(rules.diphthongs_with_asper, pair)) {
                         mapped = rules.diphthongs_with_asper[pair];
                     } else {
-                        const lowercasePair = pair.toLowerCase();
                         if (hasRule(rules.diphthongs_with_asper, lowercasePair)) {
                             mapped = rules.diphthongs_with_asper[lowercasePair];
                         }
                     }
                     if (mapped !== undefined) {
+                        mapped = preserveDiphthongAccent(mapped, pair);
                         const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
                         result.push(initial + mapped.slice(1));
                         i += 2;
@@ -1241,6 +1302,11 @@
                         mapped = rules.diphthongs[normalizedPair];
                     }
                     if (mapped !== undefined) {
+                        if (startsWord &&
+                            pair[1].normalize('NFD').includes(rules.rough_breathing_mark)) {
+                            mapped = `h${mapped}`;
+                        }
+                        mapped = preserveDiphthongAccent(mapped, pair);
                         const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
                         result.push(initial + mapped.slice(1));
                         i += 2;
@@ -1261,6 +1327,34 @@
                     result.push(character);
                 }
                 i++;
+            }
+
+            return result.join('');
+        }
+
+        function preserveDiphthongAccent(transcription, greekPair) {
+            const accentTargets = rules.diphthong_accent_targets;
+            let result = [...transcription];
+
+            for (let index = 0; index < greekPair.length; index++) {
+                if (!greekPair[index].normalize('NFD').includes(rules.diphthong_acute_mark)) {
+                    continue;
+                }
+
+                let outputIndex = -1;
+                if (index === 0) {
+                    outputIndex = result.findIndex(character => hasRule(accentTargets, character));
+                } else {
+                    for (let outputCharacterIndex = result.length - 1; outputCharacterIndex >= 0; outputCharacterIndex--) {
+                        if (hasRule(accentTargets, result[outputCharacterIndex])) {
+                            outputIndex = outputCharacterIndex;
+                            break;
+                        }
+                    }
+                }
+                if (outputIndex !== -1) {
+                    result[outputIndex] = accentTargets[result[outputIndex]];
+                }
             }
 
             return result.join('');

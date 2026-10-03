@@ -47,14 +47,24 @@
     "ῥ": "rh",
     "Ῥ": "Rh"
   },
+  "special_word_transcriptions": {
+    "ῥόδος": "rhodos",
+    "Ῥόδος": "Rhodos"
+  },
+  "gamma_nasal_clusters": {
+    "γγ": "ng",
+    "γκ": "nk",
+    "γχ": "nch",
+    "γξ": "nx"
+  },
   "elisions": {
     "δ᾿": "dé",
     "Δ᾿": "Dé"
   },
   "diphthongs": {
-    "αι": "aj",
-    "ει": "ej",
-    "οι": "oj",
+    "αι": "ai",
+    "ει": "ei",
+    "οι": "oi",
     "υι": "yj",
     "αυ": "au", "αὐ": "au", "αὔ": "au", "αὒ": "au", "αὖ": "au",
     "αύ": "au", "αὺ": "au", "αῦ": "au",
@@ -71,8 +81,14 @@
     "ή": "η", "ὴ": "η", "ῆ": "η", "ἠ": "η", "ἢ": "η", "ἤ": "η", "ἦ": "η",
     "ί": "ι", "ὶ": "ι", "ῖ": "ι", "ἰ": "ι", "ἲ": "ι", "ἴ": "ι", "ἶ": "ι",
     "ό": "ο", "ὸ": "ο", "ὀ": "ο", "ὂ": "ο", "ὄ": "ο",
-    "ύ": "υ", "ὺ": "υ", "ῦ": "υ", "ὐ": "υ", "ὒ": "υ", "ὔ": "υ", "ὖ": "υ",
+    "ύ": "υ", "ὺ": "υ", "ῦ": "υ", "ὐ": "υ", "ὒ": "υ", "ὔ": "υ", "ὖ": "υ", "ὑ": "υ", "ὓ": "υ", "ὕ": "υ", "ὗ": "υ",
+    "ἱ": "ι", "ἳ": "ι", "ἵ": "ι", "ἷ": "ι",
     "ώ": "ω", "ὼ": "ω", "ῶ": "ω", "ὠ": "ω", "ὢ": "ω", "ὤ": "ω", "ὦ": "ω"
+  },
+  "diphthong_acute_mark": "\u0301",
+  "rough_breathing_mark": "\u0314",
+  "diphthong_accent_targets": {
+    "a": "á", "e": "é", "i": "í", "o": "ó", "u": "ú", "y": "ý", "j": "í"
   },
 
   "greek_to_latin": {
@@ -102,8 +118,8 @@
     "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó", "ώ": "ó"
   },
   "diaeresis_chars": {
-    "ϊ": "ï", "ΐ": "ḯ",
-    "ϋ": "ÿ", "ΰ": "ÿ́"
+    "ϊ": "-i", "ΐ": "-í",
+    "ϋ": "-y", "ΰ": "-ý"
   },
   "unicode_normalization": "NFC",
   "vowels": [
@@ -143,9 +159,9 @@
       { "uppercase": "Ψ", "lowercase": "ψ", "latin": "ps", "name": "psí" }
     ],
     "diphthongs": [
-      { "greek": "αι", "pronunciation": "[aj]", "transcription": "aj" },
-      { "greek": "ει", "pronunciation": "[ej]", "transcription": "ej" },
-      { "greek": "οι", "pronunciation": "[oj]", "transcription": "oj" },
+      { "greek": "αι", "pronunciation": "[aj]", "transcription": "ai" },
+      { "greek": "ει", "pronunciation": "[ej]", "transcription": "ei" },
+      { "greek": "οι", "pronunciation": "[oj]", "transcription": "oi" },
       { "greek": "υι", "pronunciation": "[yj]", "transcription": "yj" },
       { "greek": "αυ", "pronunciation": "[au]", "transcription": "au" },
       { "greek": "ευ", "pronunciation": "[eu]", "transcription": "eu" },
@@ -153,21 +169,32 @@
       { "greek": "ου", "pronunciation": "[ú]", "transcription": "ú" },
       { "greek": "ωυ", "pronunciation": "[óu]", "transcription": "óu" }
     ],
+    "diphthong_accent_note": "V přepisu se zachovává ostrý přízvuk i u dvojhlásek, např. εί → eí a λείπεται → leípetai.",
+    "gamma_pronunciation": {
+      "name": "Výslovnost gammy",
+      "description": "Před γ, κ, χ a ξ se γ vyslovuje jako nosové [ŋ].",
+      "examples": [
+        { "greek": "ἄγγελος", "pronunciation": "[angelos]", "transcription": "ángelos" },
+        { "greek": "ἐγκέφαλος", "pronunciation": "[enkefalos]", "transcription": "enkéfalos" },
+        { "greek": "ἔλεγχος", "pronunciation": "[elenchos]", "transcription": "élenchos" },
+        { "greek": "Σφίγξ", "pronunciation": "[Sfiŋks]", "transcription": "Sfínx" }
+      ]
+    },
     "accent": {
       "rough": {
-        "name": "Ostrý přízvuk",
-        "description": "Čte se jako „h“ na začátku slova.",
+        "name": "Ostrý přídech",
+        "description": "U počáteční samohlásky se čte jako „h“. U počáteční dvojhlásky stojí přídech nad druhou samohláskou, ale „h“ se vysloví před celou dvojhláskou; např. αἱ → hai a εὑ → heu. Počáteční ρ se přepisuje jako rh.",
         "diphthongs_key": "diphthongs_with_asper",
         "rho_special": {
           "description": "Zvláštní případ: počáteční ρ s ostrým přídechem se přepisuje jako rh a toto pravidlo má přednost před obecným pravidlem přídechu.",
-          "example": "Ῥόδος → Rhódos",
+          "example": "Ῥόδος → Rhodos",
           "mappings_key": "initial_rho_with_asper"
         }
       },
       "smooth": {
-        "name": "Jemný přízvuk",
-        "description": "Nečte se.",
-        "examples": "ἀρχή – arché; ἒφασκεν – efasken"
+        "name": "Jemný přídech",
+        "description": "Nevyslovuje se. I u počáteční dvojhlásky se píše nad její druhou samohláskou.",
+        "examples": "ἀρχή – arché; ἒφασκεν – efasken; εὐγενής – eugenés"
       }
     },
     "vowel_lengths": [
@@ -188,19 +215,24 @@
     "diaeresis": {
       "name": "Diairesis",
       "mark": "¨",
-      "description": "Ukazuje, že dvě sousední samohlásky netvoří dvojhlásku.",
-      "example": "αϊ → aï",
+      "description": "Ukazuje, že dvě sousední samohlásky netvoří dvojhlásku; pomlčka v přepisu označuje slabičný předěl.",
+      "example": "αϊ → a-i; Ἑβραϊκός → Hebra-ikós",
       "breathing_note": "Diairesis se v běžném starořeckém pravopisu nekombinuje s přídechem na stejném písmenu.",
+      "textbook_example": {
+        "greek": "Ἑβραϊκός",
+        "pronunciation": "[hebra-ikos]",
+        "transcription": "Hebra-ikós"
+      },
       "examples": [
-        { "greek": "αϊ", "transcription": "aï" },
-        { "greek": "εϊ", "transcription": "eï" },
-        { "greek": "οϊ", "transcription": "oï" },
-        { "greek": "υϊ", "transcription": "yï" },
-        { "greek": "αϋ", "transcription": "aÿ" },
-        { "greek": "εϋ", "transcription": "eÿ" },
-        { "greek": "ηϋ", "transcription": "éÿ" },
-        { "greek": "οϋ", "transcription": "oÿ" },
-        { "greek": "ωϋ", "transcription": "óÿ" }
+        { "greek": "αϊ", "transcription": "a-i" },
+        { "greek": "εϊ", "transcription": "e-i" },
+        { "greek": "οϊ", "transcription": "o-i" },
+        { "greek": "υϊ", "transcription": "y-i" },
+        { "greek": "αϋ", "transcription": "a-y" },
+        { "greek": "εϋ", "transcription": "e-y" },
+        { "greek": "ηϋ", "transcription": "é-y" },
+        { "greek": "οϋ", "transcription": "o-y" },
+        { "greek": "ωϋ", "transcription": "ó-y" }
       ]
     },
     "elision": {
@@ -232,9 +264,19 @@
       "example": "Unicode: NFC"
     },
     {
+      "name": "Nosová výslovnost gammy",
+      "description": "Před γ, κ, χ a ξ se γ vyslovuje nosově a v transkripci se zapisuje jako n.",
+      "example": "γγ → ng; γκ → nk; γχ → nch; γξ → nx",
+      "complete_data": {
+        "mappings": [
+          { "label": "Nosové skupiny s gammou", "key": "gamma_nasal_clusters" }
+        ]
+      }
+    },
+    {
       "name": "Počáteční ró s ostrým přídechem",
       "description": "Na začátku slova se ρ s ostrým přídechem přepisuje jako rh; toto zvláštní pravidlo má přednost před obecným pravidlem přídechu.",
-      "example": "Ῥόδος → Rhódos",
+      "example": "Ῥόδος → Rhodos",
       "complete_data": {
         "mappings": [
           { "label": "Počáteční ró s ostrým přídechem", "key": "initial_rho_with_asper" }
@@ -243,8 +285,8 @@
     },
     {
       "name": "Dvojhlásky s přídechem",
-      "description": "Specifické dvojice s ostrým přídechem se zpracují před běžnými dvojhláskami.",
-      "example": "αὑ → hau",
+      "description": "U počáteční dvojhlásky se přídech píše nad druhou samohláskou. Hladký přídech se nevyslovuje; ostrý přídech se v přepisu projeví jako h před celou dvojhláskou.",
+      "example": "εὐγενής → eugenés; αἱ → hai; εὑ → heu",
       "complete_data": {
         "mappings": [
           { "label": "Dvojhlásky s přídechem", "key": "diphthongs_with_asper" }
@@ -263,8 +305,8 @@
     },
     {
       "name": "Běžné dvojhlásky",
-      "description": "Dvojice znaků se převedou jako celek; přízvukové a hladké přídechové varianty samohlásek se převedou podle základní podoby a velikost písmene se řídí prvním znakem.",
-      "example": "αυ → au",
+      "description": "Dvojice znaků se převedou jako celek; ostrý přízvuk ve dvojhlásce se zachová a velikost písmene se řídí prvním znakem.",
+      "example": "ει → ei; εί → eí",
       "complete_data": {
         "mappings": [
           { "label": "Dvojhlásky", "key": "diphthongs" },
@@ -295,7 +337,7 @@
     {
       "name": "Trema",
       "description": "Trema ukazuje, že dvě sousední samohlásky netvoří dvojhlásku.",
-      "example": "αϊ → aï",
+      "example": "αϊ → a-i",
       "complete_data": {
         "mappings": [
           { "label": "Znaky s tremou", "key": "diaeresis_chars" }
