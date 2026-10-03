@@ -547,7 +547,7 @@
             "Ζ": "Z", "ζ": "z",
             "Η": "É", "η": "é", "ή": "é", "ὴ": "é", "ῆ": "é",
             "Θ": "Th", "θ": "th",
-            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ῖ": "i",
+            "Ι": "I", "ι": "i", "ί": "í", "ὶ": "i", "ῖ": "i", "ϊ": "i", "ΐ": "í",
             "Κ": "K", "κ": "k",
             "Λ": "L", "λ": "l",
             "Μ": "M", "μ": "m",
@@ -558,12 +558,19 @@
             "Ρ": "R", "ρ": "r",
             "Σ": "S", "σ": "s", "ς": "s",
             "Τ": "T", "τ": "t",
-            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y",
+            "Υ": "Y", "υ": "y", "ύ": "ý", "ὺ": "y", "ῦ": "y", "ϋ": "y", "ΰ": "ý",
             "Φ": "F", "φ": "f",
             "Χ": "Ch", "χ": "ch",
             "Ψ": "Ps", "ψ": "ps",
             "Ω": "Ó", "ω": "ó", "ώ": "ó", "ὼ": "ó", "ῶ": "ó"
         };
+
+        const diaeresisChars = {
+            "ϊ": "i", "ΐ": "í",
+            "ϋ": "y", "ΰ": "ý"
+        };
+
+        const vowels = new Set(['a', 'á', 'e', 'é', 'i', 'í', 'o', 'ó', 'u', 'y', 'ý', 'A', 'Á', 'E', 'É', 'I', 'Í', 'O', 'Ó', 'U', 'Y', 'Ý']);
 
         function transcribe() {
             const greekText = document.getElementById('greek-text').value;
@@ -692,6 +699,17 @@
                 // Check for combined characters (with diacritics)
                 if (combinedCharacters[greekText[i]]) {
                     result += combinedCharacters[greekText[i]];
+                    i++;
+                    continue;
+                }
+                
+                // Check for diaeresis characters
+                if (diaeresisChars[greekText[i]]) {
+                    // Check if previous character (in result) is a vowel
+                    if (result.length > 0 && vowels.has(result[result.length - 1])) {
+                        result += "-";
+                    }
+                    result += diaeresisChars[greekText[i]];
                     i++;
                     continue;
                 }
