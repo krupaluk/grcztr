@@ -1322,6 +1322,10 @@
             if (!['α', 'ι', 'υ'].includes(vowel.base)) return undefined;
             if (vowel.marks.includes('\u0342') || vowel.marks.includes('\u0304')) return 'long';
             if (vowel.marks.includes('\u0306')) return 'short';
+            if (getGreekDiphthong(text, index) ||
+                (index > 0 && getGreekDiphthong(text, index - 1))) {
+                return undefined;
+            }
 
             const { start, end } = getGreekWordRange(text, index);
             const word = text.slice(start, end);
@@ -1396,15 +1400,16 @@
 
         function matchesAmbiguousVowelLength(greekWord, expected, actual) {
             if (expected === actual) return true;
-            const baseline = stripValidationPunctuation(generateTranscription(greekWord));
+            const normalizedGreekWord = normalizeGreekText(greekWord);
+            const baseline = stripValidationPunctuation(generateTranscription(normalizedGreekWord));
             if (baseline !== expected) return false;
 
             const flexibleCharacters = new Map();
-            for (const index of getAmbiguousGreekVowelIndices(greekWord)) {
+            for (const index of getAmbiguousGreekVowelIndices(normalizedGreekWord)) {
                 const shortOverride = { [index]: 'short' };
                 const longOverride = { [index]: 'long' };
-                const shortForm = [...stripValidationPunctuation(generateTranscription(greekWord, shortOverride))];
-                const longForm = [...stripValidationPunctuation(generateTranscription(greekWord, longOverride))];
+                const shortForm = [...stripValidationPunctuation(generateTranscription(normalizedGreekWord, shortOverride))];
+                const longForm = [...stripValidationPunctuation(generateTranscription(normalizedGreekWord, longOverride))];
                 if (shortForm.length !== longForm.length || shortForm.length !== baseline.length) continue;
 
                 const differences = [];
