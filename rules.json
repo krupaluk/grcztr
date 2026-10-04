@@ -214,11 +214,11 @@
     "vowel_lengths": [
       { "vowels": "ε, ο", "length": "Vždy krátké" },
       { "vowels": "η, ω", "length": "Vždy dlouhé" },
-      { "vowels": "α, ι, υ s cirkumflexem", "length": "Vždy dlouhé: ᾶ → á; ῖ → í; ῦ → ý" },
-      { "vowels": "Akut na antepenultimě", "length": "Samohláska s akutem na třetí slabice od konce i samohláska v poslední slabice jsou krátké: ὕστερον → hysteron" },
-      { "vowels": "Ostatní α, ι, υ", "length": "Mohou být krátké i dlouhé; samotný akut délku neurčuje." }
+      { "vowels": "α, ι, υ s cirkumflexem", "length": "Vždy dlouhé, i v dvojhlásce: ᾶ → á; ῖ → í; ῦ → ý" },
+      { "vowels": "Akut na antepenultimě", "length": "Samohláska s akutem na třetí slabice od konce i samohláska v poslední slabice jsou krátké, také v dvojhlásce: ὕστερον → hysteron; εἵνεκεν → heineken" },
+      { "vowels": "Ostatní α, ι, υ", "length": "Mohou být krátké i dlouhé, i v dvojhlásce; samotný akut délku neurčuje." }
     ],
-    "vowel_length_note": "U ostatních případů validátor přijímá krátkou i dlouhou variantu; automatický přepis zachovává dosavadní výchozí zápis. Jde o dočasné řešení, protože délka se může lišit slovo od slova.",
+    "vowel_length_note": "Pravidla platí stejně pro α, ι a υ samostatně i v dvojhláskách. U ostatních případů validátor přijímá krátkou i dlouhou variantu; automatický přepis zachovává dosavadní výchozí zápis. Jde o dočasné řešení, protože délka se může lišit slovo od slova.",
     "punctuation": [
       { "greek": "Řecký otázník (;)", "czech": "Středník (;)" },
       { "greek": "Zvýšená tečka (·)", "czech": "Dvojtečka (:)" },
@@ -353,8 +353,8 @@
     },
     {
       "name": "Délka samohlásek α, ι a υ",
-      "description": "Cirkumflex nad α, ι nebo υ označuje dlouhou samohlásku. Akut na antepenultimě znamená, že tato samohláska i samohláska poslední slabiky jsou krátké. V ostatních případech akut délku neurčuje a validátor přijímá krátkou i dlouhou variantu.",
-      "example": "μῦθος → mýthos; ὕστερον → hysteron; u ostatního α/ι/υ s akcentem jsou možné obě délky"
+      "description": "Stejná pravidla platí pro α, ι a υ samostatně i jako součást dvojhlásek. Cirkumflex označuje dlouhou samohlásku. Akut na antepenultimě znamená, že tato samohláska i samohláska poslední slabiky jsou krátké. V ostatních případech akut délku neurčuje a validátor přijímá krátkou i dlouhou variantu.",
+      "example": "μῦθος → mýthos; ὕστερον → hysteron; εἵνεκεν → heineken; u ostatního α/ι/υ s akcentem jsou možné obě délky"
     },
     {
       "name": "Trema",

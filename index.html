@@ -1356,14 +1356,42 @@
             for (let index = 0; index < word.length; index++) {
                 const vowel = greekVowelData(word[index]);
                 if (!['α', 'ι', 'υ'].includes(vowel.base) ||
-                    getGreekVowelQuantity(word, index) ||
-                    getGreekDiphthong(word, index) ||
-                    (index > 0 && getGreekDiphthong(word, index - 1))) {
+                    getGreekVowelQuantity(word, index)) {
                     continue;
                 }
                 indices.push(index);
             }
             return indices;
+        }
+
+        function applyDiphthongVowelQuantities(transcription, greekPair, sourceText, textIndex, quantityOverrides) {
+            const result = [...transcription];
+            const vowelIndices = result
+                .map((character, index) =>
+                    hasRule(rules.diphthong_accent_targets, character) ||
+                    Object.values(rules.diphthong_accent_targets).includes(character) ? index : -1)
+                .filter(index => index !== -1);
+
+            for (let pairIndex = 0; pairIndex < greekPair.length; pairIndex++) {
+                const greekVowel = greekVowelData(greekPair[pairIndex]);
+                if (!['α', 'ι', 'υ'].includes(greekVowel.base)) continue;
+
+                const quantity = quantityOverrides[textIndex + pairIndex] ||
+                    getGreekVowelQuantity(sourceText, textIndex + pairIndex);
+                if (!quantity) continue;
+
+                const outputIndex = pairIndex === 0 ? vowelIndices[0] : vowelIndices[vowelIndices.length - 1];
+                if (outputIndex === undefined) continue;
+
+                const outputVowel = result[outputIndex];
+                const unaccentedVowel = Object.keys(rules.diphthong_accent_targets)
+                    .find(vowel => rules.diphthong_accent_targets[vowel] === outputVowel) || outputVowel;
+                result[outputIndex] = quantity === 'long'
+                    ? rules.diphthong_accent_targets[unaccentedVowel]
+                    : unaccentedVowel;
+            }
+
+            return result.join('');
         }
 
         function matchesAmbiguousVowelLength(greekWord, expected, actual) {
@@ -1456,6 +1484,7 @@
                     }
                     if (mapped !== undefined) {
                         mapped = preserveDiphthongAccent(mapped, pair);
+                        mapped = applyDiphthongVowelQuantities(mapped, pair, text, i, quantityOverrides);
                         const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
                         result.push(initial + mapped.slice(1));
                         i += 2;
@@ -1477,6 +1506,7 @@
                             mapped = `h${mapped}`;
                         }
                         mapped = preserveDiphthongAccent(mapped, pair);
+                        mapped = applyDiphthongVowelQuantities(mapped, pair, text, i, quantityOverrides);
                         const initial = text[i] === text[i].toUpperCase() ? mapped[0].toUpperCase() : mapped[0];
                         result.push(initial + mapped.slice(1));
                         i += 2;
