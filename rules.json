@@ -8,18 +8,18 @@
     ".": "."
   },
   "combined_characters": {
-    "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "a", "ἄ": "á", "ἅ": "há", "ἆ": "a", "ἇ": "a",
-    "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "A", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "A", "Ἇ": "A",
+    "ἀ": "a", "ἁ": "há", "ἂ": "a", "ἃ": "a", "ἄ": "á", "ἅ": "há", "ἆ": "á", "ἇ": "há",
+    "Ἀ": "A", "Ἁ": "Há", "Ἂ": "A", "Ἃ": "A", "Ἄ": "Á", "Ἅ": "Há", "Ἆ": "Á", "Ἇ": "Há",
     "ἐ": "e", "ἑ": "he", "ἒ": "e", "ἓ": "he", "ἔ": "e", "ἕ": "he",
     "Ἐ": "E", "Ἑ": "He", "Ἒ": "E", "Ἓ": "He", "Ἔ": "E", "Ἕ": "He",
     "ἠ": "é", "ἡ": "hé", "ἢ": "é", "ἣ": "é", "ἤ": "é", "ἥ": "hé", "ἦ": "é", "ἧ": "é",
     "Ἠ": "É", "Ἡ": "Hé", "Ἢ": "É", "Ἣ": "É", "Ἤ": "É", "Ἥ": "Hé", "Ἦ": "É", "Ἧ": "É",
-    "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "i", "ἴ": "í", "ἵ": "hí", "ἶ": "i", "ἷ": "i",
-    "Ἰ": "I", "Ἱ": "Hí", "Ἲ": "I", "Ἳ": "I", "Ἴ": "Í", "Ἵ": "Hí", "Ἶ": "I", "Ἷ": "I",
+    "ἰ": "i", "ἱ": "hí", "ἲ": "i", "ἳ": "i", "ἴ": "í", "ἵ": "hí", "ἶ": "í", "ἷ": "hí",
+    "Ἰ": "I", "Ἱ": "Hí", "Ἲ": "I", "Ἳ": "I", "Ἴ": "Í", "Ἵ": "Hí", "Ἶ": "Í", "Ἷ": "Hí",
     "ὀ": "o", "ὁ": "ho", "ὂ": "o", "ὃ": "ho", "ὄ": "o", "ὅ": "ho",
     "Ὀ": "O", "Ὁ": "Ho", "Ὂ": "O", "Ὃ": "Ho", "Ὄ": "O", "Ὅ": "Ho",
-    "ὐ": "y", "ὑ": "hý", "ὒ": "y", "ὓ": "y", "ὔ": "ý", "ὕ": "hý", "ὖ": "y", "ὗ": "y",
-    "Ὑ": "Hý", "Ὓ": "Y", "Ὕ": "Hý", "Ὗ": "Y",
+    "ὐ": "y", "ὑ": "hý", "ὒ": "y", "ὓ": "y", "ὔ": "ý", "ὕ": "hý", "ὖ": "ý", "ὗ": "hý",
+    "Ὑ": "Hý", "Ὓ": "Y", "Ὕ": "Hý", "Ὗ": "Hý",
     "ὠ": "ó", "ὡ": "hó", "ὢ": "ó", "ὣ": "ó", "ὤ": "ó", "ὥ": "hó", "ὦ": "ó", "ὧ": "ó",
     "Ὠ": "Ó", "Ὡ": "Hó", "Ὢ": "Ó", "Ὣ": "Ó", "Ὤ": "Ó", "Ὥ": "Hó", "Ὦ": "Ó", "Ὧ": "Ó",
     "ᾀ": "a", "ᾁ": "há", "ᾂ": "a", "ᾃ": "a", "ᾄ": "á", "ᾅ": "há", "ᾆ": "a", "ᾇ": "a",
@@ -28,17 +28,17 @@
     "ᾘ": "É", "ᾙ": "Hé", "ᾚ": "É", "ᾛ": "É", "ᾜ": "É", "ᾝ": "Hé", "ᾞ": "É", "ᾟ": "É",
     "ᾠ": "ó", "ᾡ": "hó", "ᾢ": "ó", "ᾣ": "ó", "ᾤ": "ó", "ᾥ": "hó", "ᾦ": "ó", "ᾧ": "ó",
     "ᾨ": "Ó", "ᾩ": "Hó", "ᾪ": "Ó", "ᾫ": "Ó", "ᾬ": "Ó", "ᾭ": "Hó", "ᾮ": "Ó", "ᾯ": "Ó",
-    "ᾲ": "a", "ᾳ": "a", "ᾴ": "á", "ᾶ": "a", "ᾷ": "a",
+    "ᾲ": "a", "ᾳ": "a", "ᾴ": "á", "ᾶ": "á", "ᾷ": "á",
     "ᾼ": "A",
     "ῂ": "é", "ῃ": "é", "ῄ": "é", "ῆ": "é", "ῇ": "é",
     "ῌ": "É",
     "ᾰ": "a", "ᾱ": "á",
-    "ῒ": "i", "ῖ": "i", "ῗ": "i", "ῐ": "i", "ῑ": "í",
+    "ῒ": "i", "ῖ": "í", "ῗ": "í", "ῐ": "i", "ῑ": "í",
     "Ᾰ": "A", "Ᾱ": "Á",
     "Ῐ": "I", "Ῑ": "Í", "Ὶ": "Í", "Ί": "Í",
     "ῲ": "ó", "ῳ": "ó", "ῴ": "ó", "ῶ": "ó", "ῷ": "ó",
     "ῼ": "Ó",
-    "ῠ": "y", "ῡ": "ý", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y", "ῧ": "y",
+    "ῠ": "y", "ῡ": "ý", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "ý", "ῧ": "ý",
     "Ῠ": "Y", "Ῡ": "Ý", "Ὺ": "Y", "Ύ": "Ý", "Ῥ": "R"
   },
   "diphthongs_with_asper": {
@@ -214,12 +214,11 @@
     "vowel_lengths": [
       { "vowels": "ε, ο", "length": "Vždy krátké" },
       { "vowels": "η, ω", "length": "Vždy dlouhé" },
-      { "vowels": "α", "length": "ᾰ → a; ᾱ → á" },
-      { "vowels": "ι", "length": "ῐ → i; ῑ → í" },
-      { "vowels": "υ", "length": "ῠ → y; ῡ → ý" },
-      { "vowels": "Akut a jemný přídech", "length": "Akut se zachovává (ύ → ý); jemný přídech se ignoruje (ἄ → á)." }
+      { "vowels": "α, ι, υ s cirkumflexem", "length": "Vždy dlouhé: ᾶ → á; ῖ → í; ῦ → ý" },
+      { "vowels": "Akut na antepenultimě", "length": "Samohláska s akutem na třetí slabice od konce i samohláska v poslední slabice jsou krátké: ὕστερον → hysteron" },
+      { "vowels": "Ostatní α, ι, υ", "length": "Mohou být krátké i dlouhé; samotný akut délku neurčuje." }
     ],
-    "vowel_length_note": "Jde o dočasné a nejisté řešení. Délku α, ι a υ přebíráme z řeckého textu; až budeme mít více informací, může se toto pravidlo změnit.",
+    "vowel_length_note": "U ostatních případů validátor přijímá krátkou i dlouhou variantu; automatický přepis zachovává dosavadní výchozí zápis. Jde o dočasné řešení, protože délka se může lišit slovo od slova.",
     "punctuation": [
       { "greek": "Řecký otázník (;)", "czech": "Středník (;)" },
       { "greek": "Zvýšená tečka (·)", "czech": "Dvojtečka (:)" },
@@ -354,8 +353,8 @@
     },
     {
       "name": "Délka samohlásek α, ι a υ",
-      "description": "U samohlásek, které mohou být dlouhé i krátké, se délka označená v řeckém textu zachová v přepisu. Akutní přízvuk se přepíše jako čárka; jemný přídech se ignoruje.",
-      "example": "ᾱ → á; ᾰ → a; ῑ → í; ῐ → i; ῡ → ý; ῠ → y; ἄ → á"
+      "description": "Cirkumflex nad α, ι nebo υ označuje dlouhou samohlásku. Akut na antepenultimě znamená, že tato samohláska i samohláska poslední slabiky jsou krátké. V ostatních případech akut délku neurčuje a validátor přijímá krátkou i dlouhou variantu.",
+      "example": "μῦθος → mýthos; ὕστερον → hysteron; u ostatního α/ι/υ s akcentem jsou možné obě délky"
     },
     {
       "name": "Trema",

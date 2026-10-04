@@ -1167,6 +1167,8 @@
                 if (expectedWord && actualWord) {
                     const sourceWord = sourceWords[index];
                     const equivalentValues = rules.validation_equivalents[expectedWord.value] || [];
+                    const matchesAmbiguousQuantity = sourceWord &&
+                        matchesAmbiguousVowelLength(sourceWord.display, expectedWord.value, actualWord.value);
                     const matchesElisionSuffix = sourceWord && Object.entries(rules.elisions)
                         .some(([greekElision, transcription]) => {
                             const sourceEnding = stripValidationPunctuation(greekElision);
@@ -1183,6 +1185,7 @@
                         type: expectedWord.value === actualWord.value ||
                             equivalentValues.some(equivalent =>
                                 stripValidationPunctuation(equivalent) === actualWord.value) ||
+                            matchesAmbiguousQuantity ||
                             matchesElisionSuffix ? 'correct' : 'incorrect',
                         expected: expectedWord,
                         actual: actualWord
@@ -1263,7 +1266,140 @@
             document.getElementById('validation-output').classList.add('active');
         }
 
-        function generateTranscription(greekText) {
+        function greekVowelData(character) {
+            const decomposed = [...character.normalize('NFD')];
+            const base = decomposed[0].toLowerCase();
+            return {
+                base,
+                marks: decomposed.slice(1),
+                isVowel: 'αεηιουω'.includes(base)
+            };
+        }
+
+        function getGreekDiphthong(text, index) {
+            if (index + 1 >= text.length) return '';
+            const pair = text.slice(index, index + 2);
+            if ([...pair].some(character => character.normalize('NFD').includes('\u0308'))) {
+                return '';
+            }
+
+            const normalizedPair = [...pair]
+                .map(character => {
+                    const lowercaseCharacter = character.toLowerCase();
+                    return rules.diphthong_vowel_variants[lowercaseCharacter] || lowercaseCharacter;
+                })
+                .join('');
+            return hasRule(rules.diphthongs, normalizedPair) ? normalizedPair : '';
+        }
+
+        function getGreekWordRange(text, index) {
+            let start = index;
+            let end = index + 1;
+            while (start > 0 && /[\p{L}\p{M}]/u.test(text[start - 1])) start--;
+            while (end < text.length && /[\p{L}\p{M}]/u.test(text[end])) end++;
+            return { start, end };
+        }
+
+        function getGreekSyllables(word) {
+            const syllables = [];
+            for (let index = 0; index < word.length; index++) {
+                const vowel = greekVowelData(word[index]);
+                if (!vowel.isVowel) continue;
+
+                const nextVowel = index + 1 < word.length ? greekVowelData(word[index + 1]) : null;
+                if (nextVowel && nextVowel.isVowel && getGreekDiphthong(word, index)) {
+                    syllables.push({ start: index, end: index + 1 });
+                    index++;
+                } else {
+                    syllables.push({ start: index, end: index });
+                }
+            }
+            return syllables;
+        }
+
+        function getGreekVowelQuantity(text, index) {
+            const vowel = greekVowelData(text[index]);
+            if (!['α', 'ι', 'υ'].includes(vowel.base)) return undefined;
+            if (vowel.marks.includes('\u0342') || vowel.marks.includes('\u0304')) return 'long';
+            if (vowel.marks.includes('\u0306')) return 'short';
+
+            const { start, end } = getGreekWordRange(text, index);
+            const word = text.slice(start, end);
+            const syllables = getGreekSyllables(word);
+            const localIndex = index - start;
+            const targetSyllable = syllables.findIndex(syllable =>
+                localIndex >= syllable.start && localIndex <= syllable.end);
+            const acuteAntepenult = syllables.findIndex(syllable =>
+                [...word.slice(syllable.start, syllable.end + 1)].some(character =>
+                    character.normalize('NFD').includes(rules.diphthong_acute_mark))) === syllables.length - 3;
+            if (acuteAntepenult &&
+                (targetSyllable === syllables.length - 3 || targetSyllable === syllables.length - 1)) {
+                return 'short';
+            }
+            return undefined;
+        }
+
+        function applyVowelQuantity(transcription, greekCharacter, quantity) {
+            if (!quantity) return transcription;
+            const base = greekVowelData(greekCharacter).base;
+            const lowerVowel = { α: 'a', ι: 'i', υ: 'y' }[base];
+            const longVowels = { a: 'á', i: 'í', y: 'ý' };
+            const target = quantity === 'long' ? longVowels[lowerVowel] : lowerVowel;
+            const upperTarget = target[0].toUpperCase() + target.slice(1);
+            const vowelPattern = base === 'υ' ? /[yýYÝ]/ : base === 'ι' ? /[iíIÍ]/ : /[aáAÁ]/;
+            return transcription.replace(vowelPattern, match =>
+                match === match.toUpperCase() ? upperTarget.toUpperCase() : target);
+        }
+
+        function getAmbiguousGreekVowelIndices(word) {
+            const indices = [];
+            for (let index = 0; index < word.length; index++) {
+                const vowel = greekVowelData(word[index]);
+                if (!['α', 'ι', 'υ'].includes(vowel.base) ||
+                    getGreekVowelQuantity(word, index) ||
+                    getGreekDiphthong(word, index) ||
+                    (index > 0 && getGreekDiphthong(word, index - 1))) {
+                    continue;
+                }
+                indices.push(index);
+            }
+            return indices;
+        }
+
+        function matchesAmbiguousVowelLength(greekWord, expected, actual) {
+            if (expected === actual) return true;
+            const baseline = stripValidationPunctuation(generateTranscription(greekWord));
+            if (baseline !== expected) return false;
+
+            const flexibleCharacters = new Map();
+            for (const index of getAmbiguousGreekVowelIndices(greekWord)) {
+                const shortOverride = { [index]: 'short' };
+                const longOverride = { [index]: 'long' };
+                const shortForm = [...stripValidationPunctuation(generateTranscription(greekWord, shortOverride))];
+                const longForm = [...stripValidationPunctuation(generateTranscription(greekWord, longOverride))];
+                if (shortForm.length !== longForm.length || shortForm.length !== baseline.length) continue;
+
+                const differences = [];
+                for (let outputIndex = 0; outputIndex < shortForm.length; outputIndex++) {
+                    if (shortForm[outputIndex] !== longForm[outputIndex]) differences.push(outputIndex);
+                }
+                if (differences.length === 1) {
+                    flexibleCharacters.set(differences[0], new Set([
+                        shortForm[differences[0]],
+                        longForm[differences[0]]
+                    ]));
+                }
+            }
+
+            const expectedCharacters = [...expected];
+            const actualCharacters = [...actual];
+            if (expectedCharacters.length !== actualCharacters.length) return false;
+            return expectedCharacters.every((character, index) =>
+                character === actualCharacters[index] ||
+                (flexibleCharacters.has(index) && flexibleCharacters.get(index).has(actualCharacters[index])));
+        }
+
+        function generateTranscription(greekText, quantityOverrides = {}) {
             const text = normalizeGreekText(greekText);
             const result = [];
             let i = 0;
@@ -1352,11 +1488,21 @@
                 if (hasRule(rules.punctuation, character)) {
                     result.push(rules.punctuation[character]);
                 } else if (hasRule(rules.combined_characters, character)) {
-                    result.push(rules.combined_characters[character]);
+                    const quantity = quantityOverrides[i] || getGreekVowelQuantity(text, i);
+                    result.push(applyVowelQuantity(
+                        rules.combined_characters[character],
+                        character,
+                        quantity
+                    ));
                 } else if (hasRule(rules.diaeresis_chars, character)) {
                     result.push(rules.diaeresis_chars[character]);
                 } else if (hasRule(rules.greek_to_latin, character)) {
-                    result.push(rules.greek_to_latin[character]);
+                    const quantity = quantityOverrides[i] || getGreekVowelQuantity(text, i);
+                    result.push(applyVowelQuantity(
+                        rules.greek_to_latin[character],
+                        character,
+                        quantity
+                    ));
                 } else {
                     result.push(character);
                 }
