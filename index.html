@@ -257,6 +257,7 @@
 
         .teacher-summary-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
         }
 
@@ -266,6 +267,12 @@
             border: 1px solid #ddd;
             text-align: left;
             vertical-align: top;
+            overflow-wrap: anywhere;
+        }
+
+        .teacher-summary-table th:first-child,
+        .teacher-summary-table td:first-child {
+            width: 20%;
         }
 
         .teacher-summary-table th {
@@ -281,6 +288,7 @@
 
         .teacher-alphabet-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
         }
 
@@ -289,6 +297,7 @@
             padding: 7px 10px;
             border: 1px solid #ddd;
             text-align: left;
+            overflow-wrap: anywhere;
         }
 
         .teacher-alphabet-table th {
@@ -297,10 +306,6 @@
 
         .teacher-alphabet-container {
             margin-top: 14px;
-        }
-
-        .teacher-alphabet-table td {
-            white-space: nowrap;
         }
 
         @media (max-width: 700px) {
@@ -765,7 +770,11 @@
                     item.vowels,
                     item.length
                 ]);
-                container.appendChild(createTeacherTable(['Samohlásky', 'Délka'], rows));
+                container.appendChild(createTeacherTable(['Samohlásky', 'Délka / přepis'], rows));
+
+                const note = document.createElement('p');
+                note.textContent = ruleData.teacher_summary.vowel_length_note;
+                container.appendChild(note);
             });
 
             addTeacherSummarySection(tableBody, 'Interpunkce', container => {
@@ -953,6 +962,7 @@
                     'diphthongs',
                     'elisions',
                     'validation_equivalents',
+                    'validation_suffix_equivalents',
                     'validation_character_equivalents',
                     'greek_to_latin',
                     'diaeresis_chars'
@@ -986,6 +996,7 @@
                     typeof loadedRules.teacher_summary.accent.rough.rho_special.mappings_key !== 'string' ||
                     !loadedRules[loadedRules.teacher_summary.accent.rough.rho_special.mappings_key] ||
                     !Array.isArray(loadedRules.teacher_summary.vowel_lengths) ||
+                    typeof loadedRules.teacher_summary.vowel_length_note !== 'string' ||
                     !Array.isArray(loadedRules.teacher_summary.punctuation) ||
                     !loadedRules.teacher_summary.punctuation_example ||
                     typeof loadedRules.teacher_summary.punctuation_example.greek !== 'string' ||
@@ -1147,18 +1158,32 @@
             return words;
         }
 
-        function alignWords(expected, actual) {
+        function alignWords(expected, actual, sourceWords = []) {
             const aligned = [];
             const wordCount = Math.max(expected.length, actual.length);
             for (let index = 0; index < wordCount; index++) {
                 const expectedWord = expected[index];
                 const actualWord = actual[index];
                 if (expectedWord && actualWord) {
+                    const sourceWord = sourceWords[index];
                     const equivalentValues = rules.validation_equivalents[expectedWord.value] || [];
+                    const matchesElisionSuffix = sourceWord && Object.entries(rules.elisions)
+                        .some(([greekElision, transcription]) => {
+                            const sourceEnding = stripValidationPunctuation(greekElision);
+                            const transcriptionSuffix = stripValidationPunctuation(transcription);
+                            const alternatives = rules.validation_suffix_equivalents[transcription] || [];
+                            return sourceWord.value.endsWith(sourceEnding) &&
+                                expectedWord.value.endsWith(transcriptionSuffix) &&
+                                alternatives.some(alternative =>
+                                    actualWord.value ===
+                                    expectedWord.value.slice(0, -transcriptionSuffix.length) +
+                                    stripValidationPunctuation(alternative));
+                        });
                     aligned.push({
                         type: expectedWord.value === actualWord.value ||
                             equivalentValues.some(equivalent =>
-                                stripValidationPunctuation(equivalent) === actualWord.value) ? 'correct' : 'incorrect',
+                                stripValidationPunctuation(equivalent) === actualWord.value) ||
+                            matchesElisionSuffix ? 'correct' : 'incorrect',
                         expected: expectedWord,
                         actual: actualWord
                     });
@@ -1205,7 +1230,8 @@
 
             const expected = tokenize(generateTranscription(greekText));
             const actual = tokenize(userTranscription);
-            const aligned = alignWords(expected, actual);
+            const sourceWords = tokenize(greekText);
+            const aligned = alignWords(expected, actual, sourceWords);
             const textDiv = document.getElementById('validation-text');
             textDiv.replaceChildren();
 

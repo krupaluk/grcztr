@@ -32,12 +32,14 @@
     "ᾼ": "A",
     "ῂ": "é", "ῃ": "é", "ῄ": "é", "ῆ": "é", "ῇ": "é",
     "ῌ": "É",
-    "ῒ": "i", "ῖ": "i", "ῗ": "i",
-    "Ῐ": "I", "Ῑ": "I", "Ὶ": "Í", "Ί": "I",
+    "ᾰ": "a", "ᾱ": "á",
+    "ῒ": "i", "ῖ": "i", "ῗ": "i", "ῐ": "i", "ῑ": "í",
+    "Ᾰ": "A", "Ᾱ": "Á",
+    "Ῐ": "I", "Ῑ": "Í", "Ὶ": "Í", "Ί": "Í",
     "ῲ": "ó", "ῳ": "ó", "ῴ": "ó", "ῶ": "ó", "ῷ": "ó",
     "ῼ": "Ó",
-    "ῠ": "y", "ῡ": "y", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y", "ῧ": "y",
-    "Ῠ": "Y", "Ῡ": "Y", "Ὺ": "Y", "Ύ": "Y", "Ῥ": "R"
+    "ῠ": "y", "ῡ": "ý", "ῢ": "y", "ΰ": "y", "ῤ": "r", "ῥ": "r", "ῦ": "y", "ῧ": "y",
+    "Ῠ": "Y", "Ῡ": "Ý", "Ὺ": "Y", "Ύ": "Ý", "Ῥ": "R"
   },
   "diphthongs_with_asper": {
     "αὑ": "hau", "αὓ": "hau", "αὕ": "hau", "αὗ": "hau",
@@ -49,9 +51,7 @@
   },
   "special_word_transcriptions": {
     "ῥόδος": "rhodos",
-    "Ῥόδος": "Rhodos",
-    "ταύτηι": "taútei",
-    "Ταύτηι": "Taútei"
+    "Ῥόδος": "Rhodos"
   },
   "gamma_nasal_clusters": {
     "γγ": "ng",
@@ -64,6 +64,10 @@
     "Δ᾿": "Dé"
   },
   "validation_equivalents": {
+    "dé": ["d᾿"],
+    "Dé": ["D᾿"]
+  },
+  "validation_suffix_equivalents": {
     "dé": ["d᾿"],
     "Dé": ["D᾿"]
   },
@@ -140,7 +144,7 @@
   ],
   "transcription_examples": {
     "greek": "λείπεται ὡς ἔστιν· ταύτηι δ᾿ ἐπὶ σήματ᾿ ἔασι πολλὰ μάλ᾿, ὡς ἀγένητον",
-    "transcription": "leípetai hós estin taútei d' epi sémat᾿ easi polla mál᾿, hós agenéton"
+    "transcription": "leípetai hós estin taútéi d' epi sémat᾿ easi polla mál᾿, hós agenéton"
   },
   "teacher_summary": {
     "alphabet": [
@@ -210,8 +214,12 @@
     "vowel_lengths": [
       { "vowels": "ε, ο", "length": "Vždy krátké" },
       { "vowels": "η, ω", "length": "Vždy dlouhé" },
-      { "vowels": "α, υ, ι", "length": "Někdy dlouhé, někdy krátké" }
+      { "vowels": "α", "length": "ᾰ → a; ᾱ → á" },
+      { "vowels": "ι", "length": "ῐ → i; ῑ → í" },
+      { "vowels": "υ", "length": "ῠ → y; ῡ → ý" },
+      { "vowels": "Akut a jemný přídech", "length": "Akut se zachovává (ύ → ý); jemný přídech se ignoruje (ἄ → á)." }
     ],
+    "vowel_length_note": "Jde o dočasné a nejisté řešení. Délku α, ι a υ přebíráme z řeckého textu; až budeme mít více informací, může se toto pravidlo změnit.",
     "punctuation": [
       { "greek": "Řecký otázník (;)", "czech": "Středník (;)" },
       { "greek": "Zvýšená tečka (·)", "czech": "Dvojtečka (:)" },
@@ -343,6 +351,11 @@
           { "label": "Kombinované znaky", "key": "combined_characters" }
         ]
       }
+    },
+    {
+      "name": "Délka samohlásek α, ι a υ",
+      "description": "U samohlásek, které mohou být dlouhé i krátké, se délka označená v řeckém textu zachová v přepisu. Akutní přízvuk se přepíše jako čárka; jemný přídech se ignoruje.",
+      "example": "ᾱ → á; ᾰ → a; ῑ → í; ῐ → i; ῡ → ý; ῠ → y; ἄ → á"
     },
     {
       "name": "Trema",
