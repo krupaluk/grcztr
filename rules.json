@@ -255,10 +255,11 @@
     },
     "elision": {
       "name": "Elize δέ",
-      "description": "Elize δέ je zkrácené δέ; při transkripci se píše dé.",
+      "description": "Elize δέ je zkrácené δέ; samostatně se při transkripci píše dé. U elize připojené k předchozímu slovu jsou přijatelné rozvedené i stažené psaní s apostrofem.",
       "examples": [
         { "greek": "δ᾿", "transcription": "dé" },
-        { "greek": "δέ", "transcription": "dé" }
+        { "greek": "δέ", "transcription": "dé" },
+        { "greek": "τάδ᾿", "transcription": "tádé nebo tád'" }
       ]
     },
     "iota_subscript": {
@@ -313,8 +314,8 @@
     },
     {
       "name": "Elize",
-      "description": "Zkrácená podoba δέ se při transkripci zapíše stejně jako plná podoba.",
-      "example": "δ᾿ → dé; δέ → dé",
+      "description": "Samostatná zkrácená podoba δέ se zapíše jako dé. Je-li δ᾿ připojeno k předchozímu slovu, validátor přijme rozvedené zakončení dé i stažené zakončení d' s apostrofem.",
+      "example": "δ᾿ → dé; δέ → dé; τάδ᾿ → tádé nebo tád'",
       "complete_data": {
         "mappings": [
           { "label": "Elize", "key": "elisions" }

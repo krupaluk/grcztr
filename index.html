@@ -1190,12 +1190,22 @@
                                     expectedWord.value.slice(0, -transcriptionSuffix.length) +
                                     stripValidationPunctuation(alternative));
                         });
+                    const matchesAttachedElision = sourceWord && Object.entries(rules.elisions)
+                        .some(([greekElision, transcription]) => {
+                            const sourceEnding = stripValidationPunctuation(greekElision);
+                            const transcriptionSuffix = stripValidationPunctuation(transcription);
+                            return sourceWord.value.endsWith(sourceEnding) &&
+                                expectedWord.value.endsWith(transcriptionSuffix) &&
+                                /['᾿][.,;:!?…]*$/u.test(actualWord.display) &&
+                                actualWord.value === expectedWord.value.slice(0, -1);
+                        });
                     aligned.push({
                         type: expectedWord.value === actualWord.value ||
                             equivalentValues.some(equivalent =>
                                 stripValidationPunctuation(equivalent) === actualWord.value) ||
                             matchesAmbiguousQuantity ||
-                            matchesElisionSuffix ? 'correct' : 'incorrect',
+                            matchesElisionSuffix ||
+                            matchesAttachedElision ? 'correct' : 'incorrect',
                         expected: expectedWord,
                         actual: actualWord
                     });
