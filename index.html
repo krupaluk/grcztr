@@ -1141,7 +1141,9 @@
         function tokenize(text) {
             const words = [];
             text.trim().split(/\s+/).forEach(display => {
-                const parts = display.split(/(?<=['᾿])(?=[\p{L}\p{M}])/u);
+                const token = display.startsWith('᾿') &&
+                    greekVowelData(display[1] || '').isVowel ? display.slice(1) : display;
+                const parts = token.split(/(?<=['᾿])(?=[\p{L}\p{M}])/u);
                 parts.forEach(part => {
                     const value = stripValidationPunctuation(part);
                     if (!value) return;
@@ -1219,7 +1221,12 @@
                     segment += character;
                 }
             }
-            return normalized + segment.normalize(rules.unicode_normalization);
+            const normalizedText = normalized + segment.normalize(rules.unicode_normalization);
+            return normalizedText.replace(/(^|[^\p{L}\p{M}])᾿(?=[\p{Script=Greek}])/gu,
+                (match, prefix, offset, source) => {
+                    const nextCharacter = source[offset + prefix.length + 1];
+                    return greekVowelData(nextCharacter).isVowel ? prefix : match;
+                });
         }
 
         function validate() {
