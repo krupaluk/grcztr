@@ -1138,11 +1138,18 @@
             return normalized.slice(start, end);
         }
 
+        function removeLeadingGreekSmoothBreathing(text) {
+            if (!/^[᾿῎](?=[\p{Script=Greek}])/u.test(text) ||
+                !greekVowelData(text[1] || '').isVowel) {
+                return text;
+            }
+            return text.slice(1);
+        }
+
         function tokenize(text) {
             const words = [];
             text.trim().split(/\s+/).forEach(display => {
-                const token = display.startsWith('᾿') &&
-                    greekVowelData(display[1] || '').isVowel ? display.slice(1) : display;
+                const token = removeLeadingGreekSmoothBreathing(display);
                 const parts = token.split(/(?<=['᾿])(?=[\p{L}\p{M}])/u);
                 parts.forEach(part => {
                     const value = stripValidationPunctuation(part);
@@ -1222,10 +1229,12 @@
                 }
             }
             const normalizedText = normalized + segment.normalize(rules.unicode_normalization);
-            return normalizedText.replace(/(^|[^\p{L}\p{M}])᾿(?=[\p{Script=Greek}])/gu,
-                (match, prefix, offset, source) => {
-                    const nextCharacter = source[offset + prefix.length + 1];
-                    return greekVowelData(nextCharacter).isVowel ? prefix : match;
+            return normalizedText.replace(/(^|[^\p{L}\p{M}])([᾿῎])(?=[\p{Script=Greek}])/gu,
+                (match, prefix, marker, offset, source) => {
+                    const markerAndVowel = marker + source[offset + match.length];
+                    return removeLeadingGreekSmoothBreathing(markerAndVowel).length === 1
+                        ? prefix
+                        : match;
                 });
         }
 
